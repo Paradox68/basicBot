@@ -1,5 +1,5 @@
 /**
- *Copyright 2014 Yemasthui
+ *Copyright 2017 Paradox68
  *Modifications (including forks) of the code to fit personal needs are allowed only for personal use and should refer back to the original source.
  *This software is not for profit, any extension, or unauthorised person providing this software is not authorised to be in a position of any monetary gain from this use of this software. Any and all money gained under the use of the software (which includes donations) must be passed on to the original author.
  */
@@ -54,7 +54,7 @@
     var loadChat = function (cb) {
         if (!cb) cb = function () {
         };
-        $.get("https://rawgit.com/Yemasthui/basicBot/master/lang/langIndex.json", function (json) {
+        $.get("https://rawgit.com/Paradox68/basicBot/master/lang/langIndex.json", function (json) {
             var link = basicBot.chatLink;
             if (json !== null && typeof json !== "undefined") {
                 langIndex = json;
@@ -174,18 +174,18 @@
         return m;
     };
 
-    var botCreator = "Matthew (Yemasthui)";
-    var botMaintainer = "Benzi (Quoona)"
+    var botCreator = "Paradox VII";
+    var botMaintainer = "Connor (Paradox VII)"
     var botCreatorIDs = ["3851534", "4105209"];
 
     var basicBot = {
         version: "2.4.5",
         status: false,
-        name: "basicBot",
+        name: "Bass Music Bot",
         loggedInID: null,
-        scriptLink: "https://rawgit.com/Yemasthui/basicBot/master/basicBot.js",
+        scriptLink: "https://rawgit.com/Paradox68/basicBot/master/basicBot.js",
         cmdLink: "http://git.io/245Ppg",
-        chatLink: "https://rawgit.com/Yemasthui/basicBot/master/lang/en.json",
+        chatLink: "https://rawgit.com/Paradox68/basicBot/master/lang/en.json",
         chat: null,
         loadChat: loadChat,
         retrieveSettings: retrieveSettings,
@@ -193,7 +193,7 @@
         settings: {
             botName: "basicBot",
             language: "english",
-            chatLink: "https://rawgit.com/Yemasthui/basicBot/master/lang/en.json",
+            chatLink: "https://rawgit.com/Paradox68/basicBot/master/lang/en.json",
             startupCap: 1, // 1-200
             startupVolume: 0, // 0-100
             startupEmoji: false, // true or false
@@ -245,8 +245,8 @@
             songstats: true,
             commandLiteral: "!",
             blacklists: {
-                NSFW: "https://rawgit.com/Yemasthui/basicBot-customization/master/blacklists/ExampleNSFWlist.json",
-                OP: "https://rawgit.com/Yemasthui/basicBot-customization/master/blacklists/ExampleOPlist.json"
+                NSFW: "https://rawgit.com/Paradox68/basicBot-customization/master/blacklists/ExampleNSFWlist.json",
+                OP: "https://rawgit.com/Paradox68/basicBot-customization/master/blacklists/ExampleOPlist.json"
             }
         },
         room: {
@@ -1254,10 +1254,10 @@
             API.chatLog('Volume set to ' + basicBot.settings.startupVolume);
             loadChat(API.sendChat(subChat(basicBot.chat.online, {botname: basicBot.settings.botName, version: basicBot.version})));
         },
-        commands: {
+         commands: {
             executable: function (minRank, chat) {
                 var id = chat.uid;
-                var perm = basicBot.userUtilities.getPermission(id);
+                var perm = ambient.userUtilities.getPermission(id);
                 var minPerm;
                 switch (minRank) {
                     case 'admin':
@@ -1276,7 +1276,7 @@
                         minPerm = 3;
                         break;
                     case 'mod':
-                        if (basicBot.settings.bouncerPlus) {
+                        if (ambient.settings.bouncerPlus) {
                             minPerm = 2;
                         }
                         else {
@@ -1305,13 +1305,24 @@
                         type: 'startsWith/exact',
                         functionality: function(chat, cmd){
                                 if(this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                                if( !basicBot.commands.executable(this.rank, chat) ) return void (0);
+                                if( !ambient.commands.executable(this.rank, chat) ) return void (0);
                                 else{
                                 
                                 }
                         }
                 },
              **/
+            versionCommand: {
+                command: 'version',
+                rank: 'bouncer',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0); 
+                    else
+                        API.sendChat(subChat(ambient.version));
+                }
+            },
 
             activeCommand: {
                 command: 'active',
@@ -1319,7 +1330,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var now = Date.now();
@@ -1328,15 +1339,15 @@
                         if (msg.length === cmd.length) time = 60;
                         else {
                             time = msg.substring(cmd.length + 1);
-                            if (isNaN(time)) return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                            if (isNaN(time)) return API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
                         }
-                        for (var i = 0; i < basicBot.room.users.length; i++) {
-                            userTime = basicBot.userUtilities.getLastActivity(basicBot.room.users[i]);
+                        for (var i = 0; i < ambient.room.users.length; i++) {
+                            userTime = ambient.userUtilities.getLastActivity(ambient.room.users[i]);
                             if ((now - userTime) <= (time * 60 * 1000)) {
                                 chatters++;
                             }
                         }
-                        API.sendChat(subChat(basicBot.chat.activeusersintime, {name: chat.un, amount: chatters, time: time}));
+                        API.sendChat(subChat(ambient.chat.activeusersintime, {name: chat.un, amount: chatters, time: time}));
                     }
                 }
             },
@@ -1347,19 +1358,19 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substr(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = ambient.userUtilities.lookupUserName(name);
                         if (msg.length > cmd.length + 2) {
                             if (typeof user !== 'undefined') {
-                                if (basicBot.room.roomevent) {
-                                    basicBot.room.eventArtists.push(user.id);
+                                if (ambient.room.roomevent) {
+                                    ambient.room.eventArtists.push(user.id);
                                 }
                                 API.moderateAddDJ(user.id);
-                            } else API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                            } else API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
                         }
                     }
                 }
@@ -1371,16 +1382,16 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nolimitspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nolimitspecified, {name: chat.un}));
                         var limit = msg.substring(cmd.length + 1);
                         if (!isNaN(limit)) {
-                            basicBot.settings.maximumAfk = parseInt(limit, 10);
-                            API.sendChat(subChat(basicBot.chat.maximumafktimeset, {name: chat.un, time: basicBot.settings.maximumAfk}));
+                            ambient.settings.maximumAfk = parseInt(limit, 10);
+                            API.sendChat(subChat(ambient.chat.maximumafktimeset, {name: chat.un, time: ambient.settings.maximumAfk}));
                         }
-                        else API.sendChat(subChat(basicBot.chat.invalidlimitspecified, {name: chat.un}));
+                        else API.sendChat(subChat(ambient.chat.invalidlimitspecified, {name: chat.un}));
                     }
                 }
             },
@@ -1391,19 +1402,19 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.afkRemoval) {
-                            basicBot.settings.afkRemoval = !basicBot.settings.afkRemoval;
-                            clearInterval(basicBot.room.afkInterval);
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.afkremoval}));
+                        if (ambient.settings.afkRemoval) {
+                            ambient.settings.afkRemoval = !ambient.settings.afkRemoval;
+                            clearInterval(ambient.room.afkInterval);
+                            API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.afkremoval}));
                         }
                         else {
-                            basicBot.settings.afkRemoval = !basicBot.settings.afkRemoval;
-                            basicBot.room.afkInterval = setInterval(function () {
-                                basicBot.roomUtilities.afkCheck()
+                            ambient.settings.afkRemoval = !ambient.settings.afkRemoval;
+                            ambient.room.afkInterval = setInterval(function () {
+                                ambient.roomUtilities.afkCheck()
                             }, 2 * 1000);
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.afkremoval}));
+                            API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.afkremoval}));
                         }
                     }
                 }
@@ -1415,15 +1426,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        basicBot.userUtilities.setLastActivity(user);
-                        API.sendChat(subChat(basicBot.chat.afkstatusreset, {name: chat.un, username: name}));
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+                        ambient.userUtilities.setLastActivity(user);
+                        API.sendChat(subChat(ambient.chat.afkstatusreset, {name: chat.un, username: name}));
                     }
                 }
             },
@@ -1434,24 +1445,24 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var lastActive = basicBot.userUtilities.getLastActivity(user);
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+                        var lastActive = ambient.userUtilities.getLastActivity(user);
                         var inactivity = Date.now() - lastActive;
-                        var time = basicBot.roomUtilities.msToStr(inactivity);
+                        var time = ambient.roomUtilities.msToStr(inactivity);
 
-                        var launchT = basicBot.room.roomstats.launchTime;
+                        var launchT = ambient.room.roomstats.launchTime;
                         var durationOnline = Date.now() - launchT;
 
                         if (inactivity == durationOnline){
-                            API.sendChat(subChat(basicBot.chat.inactivelonger, {botname: basicBot.settings.botName, name: chat.un, username: name}));
+                            API.sendChat(subChat(ambient.chat.inactivelonger, {botname: ambient.settings.botName, name: chat.un, username: name}));
                         } else {
-                        API.sendChat(subChat(basicBot.chat.inactivefor, {name: chat.un, username: name, time: time}));
+                            API.sendChat(subChat(ambient.chat.inactivefor, {name: chat.un, username: name, time: time}));
                         }
                     }
                 }
@@ -1463,15 +1474,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.autodisable) {
-                            basicBot.settings.autodisable = !basicBot.settings.autodisable;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.autodisable}));
+                        if (ambient.settings.autodisable) {
+                            ambient.settings.autodisable = !ambient.settings.autodisable;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.autodisable}));
                         }
                         else {
-                            basicBot.settings.autodisable = !basicBot.settings.autodisable;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.autodisable}));
+                            ambient.settings.autodisable = !ambient.settings.autodisable;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.autodisable}));
                         }
 
                     }
@@ -1484,16 +1495,16 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.room.autoskip) {
-                            basicBot.room.autoskip = !basicBot.room.autoskip;
-                            clearTimeout(basicBot.room.autoskipTimer);
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.autoskip}));
+                        if (ambient.room.autoskip) {
+                            ambient.room.autoskip = !ambient.room.autoskip;
+                            clearTimeout(ambient.room.autoskipTimer);
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.autoskip}));
                         }
                         else {
-                            basicBot.room.autoskip = !basicBot.room.autoskip;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.autoskip}));
+                            ambient.room.autoskip = !ambient.room.autoskip;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.autoskip}));
                         }
                     }
                 }
@@ -1505,9 +1516,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.autowoot);
+                        API.sendChat(ambient.chat.autowoot);
                     }
                 }
             },
@@ -1518,9 +1529,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.brandambassador);
+                        API.sendChat(ambient.chat.brandambassador);
                     }
                 }
             },
@@ -1531,16 +1542,16 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                            var crowd = API.getUsers();
-                            var msg = chat.message;
-                            var argument = msg.substring(cmd.length + 1);
-                            var randomUser = Math.floor(Math.random() * crowd.length);
-                            var randomBall = Math.floor(Math.random() * basicBot.chat.balls.length);
-                            var randomSentence = Math.floor(Math.random() * 1);
-                            API.sendChat(subChat(basicBot.chat.ball, {name: chat.un, botname: basicBot.settings.botName, question: argument, response: basicBot.chat.balls[randomBall]}));
-                     }
+                        var crowd = API.getUsers();
+                        var msg = chat.message;
+                        var argument = msg.substring(cmd.length + 1);
+                        var randomUser = Math.floor(Math.random() * crowd.length);
+                        var randomBall = Math.floor(Math.random() * ambient.chat.balls.length);
+                        var randomSentence = Math.floor(Math.random() * 1);
+                        API.sendChat(subChat(ambient.chat.ball, {name: chat.un, botname: ambient.settings.botName, question: argument, response: ambient.chat.balls[randomBall]}));
+                    }
                 }
             },
 
@@ -1550,13 +1561,13 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substr(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
                         API.moderateBanUser(user.id, 1, API.BAN.DAY);
                     }
                 }
@@ -1568,12 +1579,12 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nolistspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nolistspecified, {name: chat.un}));
                         var list = msg.substr(cmd.length + 1);
-                        if (typeof basicBot.room.blacklists[list] === 'undefined') return API.sendChat(subChat(basicBot.chat.invalidlistspecified, {name: chat.un}));
+                        if (typeof ambient.room.blacklists[list] === 'undefined') return API.sendChat(subChat(ambient.chat.invalidlistspecified, {name: chat.un}));
                         else {
                             var media = API.getMedia();
                             var track = {
@@ -1582,12 +1593,12 @@
                                 title: media.title,
                                 mid: media.format + ':' + media.cid
                             };
-                            basicBot.room.newBlacklisted.push(track);
-                            basicBot.room.blacklists[list].push(media.format + ':' + media.cid);
-                            API.sendChat(subChat(basicBot.chat.newblacklisted, {name: chat.un, blacklist: list, author: media.author, title: media.title, mid: media.format + ':' + media.cid}));
+                            ambient.room.newBlacklisted.push(track);
+                            ambient.room.blacklists[list].push(media.format + ':' + media.cid);
+                            API.sendChat(subChat(ambient.chat.newblacklisted, {name: chat.un, blacklist: list, author: media.author, title: media.title, mid: media.format + ':' + media.cid}));
                             API.moderateForceSkip();
-                            if (typeof basicBot.room.newBlacklistedSongFunction === 'function') {
-                                basicBot.room.newBlacklistedSongFunction(track);
+                            if (typeof ambient.room.newBlacklistedSongFunction === 'function') {
+                                ambient.room.newBlacklistedSongFunction(track);
                             }
                         }
                     }
@@ -1600,7 +1611,7 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var author = API.getMedia().author;
                         var title = API.getMedia().title;
@@ -1609,7 +1620,7 @@
                         var cid = API.getMedia().cid;
                         var songid = format + ":" + cid;
 
-                        API.sendChat(subChat(basicBot.chat.blinfo, {name: name, author: author, title: title, songid: songid}));
+                        API.sendChat(subChat(ambient.chat.blinfo, {name: name, author: author, title: title, songid: songid}));
                     }
                 }
             },
@@ -1620,23 +1631,23 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (basicBot.settings.bouncerPlus) {
-                            basicBot.settings.bouncerPlus = false;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': 'Bouncer+'}));
+                        if (ambient.settings.bouncerPlus) {
+                            ambient.settings.bouncerPlus = false;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': 'Bouncer+'}));
                         }
                         else {
-                            if (!basicBot.settings.bouncerPlus) {
+                            if (!ambient.settings.bouncerPlus) {
                                 var id = chat.uid;
-                                var perm = basicBot.userUtilities.getPermission(id);
+                                var perm = ambient.userUtilities.getPermission(id);
                                 if (perm > 2) {
-                                    basicBot.settings.bouncerPlus = true;
-                                    return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': 'Bouncer+'}));
+                                    ambient.settings.bouncerPlus = true;
+                                    return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': 'Bouncer+'}));
                                 }
                             }
-                            else return API.sendChat(subChat(basicBot.chat.bouncerplusrank, {name: chat.un}));
+                            else return API.sendChat(subChat(ambient.chat.bouncerplusrank, {name: chat.un}));
                         }
                     }
                 }
@@ -1648,14 +1659,14 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(basicBot.chat.currentbotname, {botname: basicBot.settings.botName}));
+                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(ambient.chat.currentbotname, {botname: ambient.settings.botName}));
                         var argument = msg.substring(cmd.length + 1);
                         if (argument) {
-                            basicBot.settings.botName = argument;
-                            API.sendChat(subChat(basicBot.chat.botnameset, {botName: basicBot.settings.botName}));
+                            ambient.settings.botName = argument;
+                            API.sendChat(subChat(ambient.chat.botnameset, {botName: ambient.settings.botName}));
                         }
                     }
                 }
@@ -1667,13 +1678,13 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var currentchat = $('#chat-messages').children();
                         for (var i = 0; i < currentchat.length; i++) {
                             API.moderateDeleteChat(currentchat[i].getAttribute("data-cid"));
                         }
-                        return API.sendChat(subChat(basicBot.chat.chatcleared, {name: chat.un}));
+                        return API.sendChat(subChat(ambient.chat.chatcleared, {name: chat.un}));
                     }
                 }
             },
@@ -1684,9 +1695,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(subChat(basicBot.chat.commandslink, {botname: basicBot.settings.botName, link: basicBot.cmdLink}));
+                        API.sendChat('/me A list of all available commands can be found here: https://github.com/Paradox68/AmbientBot/blob/master/commands.md');
                     }
                 }
             },
@@ -1697,15 +1708,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.cmdDeletion) {
-                            basicBot.settings.cmdDeletion = !basicBot.settings.cmdDeletion;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.cmddeletion}));
+                        if (ambient.settings.cmdDeletion) {
+                            ambient.settings.cmdDeletion = !ambient.settings.cmdDeletion;
+                            API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.cmddeletion}));
                         }
                         else {
-                            basicBot.settings.cmdDeletion = !basicBot.settings.cmdDeletion;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.cmddeletion}));
+                            ambient.settings.cmdDeletion = !ambient.settings.cmdDeletion;
+                            API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.cmddeletion}));
                         }
                     }
                 }
@@ -1716,31 +1727,31 @@
                 rank: 'user',
                 type: 'startsWith',
                 getCookie: function (chat) {
-                    var c = Math.floor(Math.random() * basicBot.chat.cookies.length);
-                    return basicBot.chat.cookies[c];
+                    var c = Math.floor(Math.random() * ambient.chat.cookies.length);
+                    return ambient.chat.cookies[c];
                 },
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
 
                         var space = msg.indexOf(' ');
                         if (space === -1) {
-                            API.sendChat(basicBot.chat.eatcookie);
+                            API.sendChat(ambient.chat.eatcookie);
                             return false;
                         }
                         else {
                             var name = msg.substring(space + 2);
-                            var user = basicBot.userUtilities.lookupUserName(name);
+                            var user = ambient.userUtilities.lookupUserName(name);
                             if (user === false || !user.inRoom) {
-                                return API.sendChat(subChat(basicBot.chat.nousercookie, {name: name}));
+                                return API.sendChat(subChat(ambient.chat.nousercookie, {name: name}));
                             }
                             else if (user.username === chat.un) {
-                                return API.sendChat(subChat(basicBot.chat.selfcookie, {name: name}));
+                                return API.sendChat(subChat(ambient.chat.selfcookie, {name: name}));
                             }
                             else {
-                                return API.sendChat(subChat(basicBot.chat.cookie, {nameto: user.username, namefrom: chat.un, cookie: this.getCookie()}));
+                                return API.sendChat(subChat(ambient.chat.cookie, {nameto: user.username, namefrom: chat.un, cookie: this.getCookie()}));
                             }
                         }
                     }
@@ -1749,13 +1760,13 @@
 
             cycleCommand: {
                 command: 'cycle',
-                rank: 'manager',
+                rank: 'mod',
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        basicBot.roomUtilities.changeDJCycle();
+                        ambient.roomUtilities.changeDJCycle();
                     }
                 }
             },
@@ -1766,15 +1777,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.cycleGuard) {
-                            basicBot.settings.cycleGuard = !basicBot.settings.cycleGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.cycleguard}));
+                        if (ambient.settings.cycleGuard) {
+                            ambient.settings.cycleGuard = !ambient.settings.cycleGuard;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.cycleguard}));
                         }
                         else {
-                            basicBot.settings.cycleGuard = !basicBot.settings.cycleGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.cycleguard}));
+                            ambient.settings.cycleGuard = !ambient.settings.cycleGuard;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.cycleguard}));
                         }
 
                     }
@@ -1787,15 +1798,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var cycleTime = msg.substring(cmd.length + 1);
                         if (!isNaN(cycleTime) && cycleTime !== "") {
-                            basicBot.settings.maximumCycletime = cycleTime;
-                            return API.sendChat(subChat(basicBot.chat.cycleguardtime, {name: chat.un, time: basicBot.settings.maximumCycletime}));
+                            ambient.settings.maximumCycletime = cycleTime;
+                            return API.sendChat(subChat(ambient.chat.cycleguardtime, {name: chat.un, time: ambient.settings.maximumCycletime}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
 
                     }
                 }
@@ -1807,67 +1818,64 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var name;
                         if (msg.length === cmd.length) name = chat.un;
                         else {
                             name = msg.substring(cmd.length + 2);
-                            var perm = basicBot.userUtilities.getPermission(chat.uid);
-                            if (perm < 2) return API.sendChat(subChat(basicBot.chat.dclookuprank, {name: chat.un}));
+                            var perm = ambient.userUtilities.getPermission(chat.uid);
+                            if (perm < 2) return API.sendChat(subChat(ambient.chat.dclookuprank, {name: chat.un}));
                         }
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var toChat = basicBot.userUtilities.dclookup(user.id);
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+                        var toChat = ambient.userUtilities.dclookup(user.id);
                         API.sendChat(toChat);
                     }
                 }
             },
 
             /*deletechatCommand: {
-                command: 'deletechat',
-                rank: 'mod',
-                type: 'startsWith',
-                functionality: function (chat, cmd) {
-                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
-                    else {
-                        var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
-                        var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var chats = $('.from');
-                        var message = $('.message');
-                        var emote = $('.emote');
-                        var from = $('.un.clickable');
-                        for (var i = 0; i < chats.length; i++) {
-                            var n = from[i].textContent;
-                            if (name.trim() === n.trim()) {
-
-                                // var messagecid = $(message)[i].getAttribute('data-cid');
-                                // var emotecid = $(emote)[i].getAttribute('data-cid');
-                                // API.moderateDeleteChat(messagecid);
-
-                                // try {
-                                //     API.moderateDeleteChat(messagecid);
-                                // }
-                                // finally {
-                                //     API.moderateDeleteChat(emotecid);
-                                // }
-
-                                if (typeof $(message)[i].getAttribute('data-cid') == "undefined"){
-                                    API.moderateDeleteChat($(emote)[i].getAttribute('data-cid')); // works well with normal messages but not with emotes due to emotes and messages are seperate.
-                                } else {
-                                    API.moderateDeleteChat($(message)[i].getAttribute('data-cid'));
-                                }
-                            }
-                        }
-                        API.sendChat(subChat(basicBot.chat.deletechat, {name: chat.un, username: name}));
-                    }
-                }
-            },*/
+             command: 'deletechat',
+             rank: 'mod',
+             type: 'startsWith',
+             functionality: function (chat, cmd) {
+             if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+             if (!ambient.commands.executable(this.rank, chat)) return void (0);
+             else {
+             var msg = chat.message;
+             if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
+             var name = msg.substring(cmd.length + 2);
+             var user = ambient.userUtilities.lookupUserName(name);
+             if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+             var chats = $('.from');
+             var message = $('.message');
+             var emote = $('.emote');
+             var from = $('.un.clickable');
+             for (var i = 0; i < chats.length; i++) {
+             var n = from[i].textContent;
+             if (name.trim() === n.trim()) {
+             // var messagecid = $(message)[i].getAttribute('data-cid');
+             // var emotecid = $(emote)[i].getAttribute('data-cid');
+             // API.moderateDeleteChat(messagecid);
+             // try {
+             //     API.moderateDeleteChat(messagecid);
+             // }
+             // finally {
+             //     API.moderateDeleteChat(emotecid);
+             // }
+             if (typeof $(message)[i].getAttribute('data-cid') == "undefined"){
+             API.moderateDeleteChat($(emote)[i].getAttribute('data-cid')); // works well with normal messages but not with emotes due to emotes and messages are seperate.
+             } else {
+             API.moderateDeleteChat($(message)[i].getAttribute('data-cid'));
+             }
+             }
+             }
+             API.sendChat(subChat(ambient.chat.deletechat, {name: chat.un, username: name}));
+             }
+             }
+             },*/
 
             emojiCommand: {
                 command: 'emoji',
@@ -1875,10 +1883,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var link = 'http://www.emoji-cheat-sheet.com/';
-                        API.sendChat(subChat(basicBot.chat.emojilist, {link: link}));
+                        API.sendChat(subChat(ambient.chat.emojilist, {link: link}));
                     }
                 }
             },
@@ -1889,13 +1897,13 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         if(chat.message.length === cmd.length) return API.sendChat('/me No user specified.');
                         var name = chat.message.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = ambient.userUtilities.lookupUserName(name);
                         if(typeof user === 'boolean') return API.sendChat('/me Invalid user specified.');
-                        var lang = basicBot.userUtilities.getUser(user).language;
+                        var lang = ambient.userUtilities.getUser(user).language;
                         var ch = '/me @' + name + ' ';
                         switch(lang){
                             case 'en': break;
@@ -1908,7 +1916,7 @@
                             case 'pt': ch += 'Por favor, fale Inglês.'; break;
                             case 'sk': ch += 'Hovorte po anglicky, prosím.'; break;
                             case 'cs': ch += 'Mluvte prosím anglicky.'; break;
-                            case 'sr': ch += 'Молим Вас, говорите енглески.'; break;                                  
+                            case 'sr': ch += 'Молим Вас, говорите енглески.'; break;
                         }
                         ch += ' English please.';
                         API.sendChat(ch);
@@ -1922,23 +1930,23 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var perm = basicBot.userUtilities.getPermission(chat.uid);
+                        var perm = ambient.userUtilities.getPermission(chat.uid);
                         var msg = chat.message;
                         var name;
                         if (msg.length > cmd.length) {
                             if (perm < 2) return void (0);
                             name = msg.substring(cmd.length + 2);
                         } else name = chat.un;
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
                         var pos = API.getWaitListPosition(user.id);
-                        if (pos < 0) return API.sendChat(subChat(basicBot.chat.notinwaitlist, {name: name}));
+                        if (pos < 0) return API.sendChat(subChat(ambient.chat.notinwaitlist, {name: name}));
                         var timeRemaining = API.getTimeRemaining();
                         var estimateMS = ((pos + 1) * 4 * 60 + timeRemaining) * 1000;
-                        var estimateString = basicBot.roomUtilities.msToStr(estimateMS);
-                        API.sendChat(subChat(basicBot.chat.eta, {name: name, time: estimateString}));
+                        var estimateString = ambient.roomUtilities.msToStr(estimateMS);
+                        API.sendChat(subChat(ambient.chat.eta, {name: name, time: estimateString}));
                     }
                 }
             },
@@ -1949,10 +1957,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.fbLink === "string")
-                            API.sendChat(subChat(basicBot.chat.facebook, {link: basicBot.settings.fbLink}));
+                        if (typeof ambient.settings.fbLink === "string")
+                            API.sendChat(subChat(ambient.chat.facebook, {link: ambient.settings.fbLink}));
                     }
                 }
             },
@@ -1963,15 +1971,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.filterChat) {
-                            basicBot.settings.filterChat = !basicBot.settings.filterChat;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.chatfilter}));
+                        if (ambient.settings.filterChat) {
+                            ambient.settings.filterChat = !ambient.settings.filterChat;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.chatfilter}));
                         }
                         else {
-                            basicBot.settings.filterChat = !basicBot.settings.filterChat;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.chatfilter}));
+                            ambient.settings.filterChat = !ambient.settings.filterChat;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.chatfilter}));
                         }
                     }
                 }
@@ -1983,7 +1991,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var name;
@@ -1991,11 +1999,11 @@
                         else {
                             name = msg.substr(cmd.length + 2);
                         }
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = ambient.userUtilities.lookupUserName(name);
                         if (user === false || !user.inRoom) {
-                            return API.sendChat(subChat(basicBot.chat.ghosting, {name1: chat.un, name2: name}));
+                            return API.sendChat(subChat(ambient.chat.ghosting, {name1: chat.un, name2: name}));
                         }
-                        else API.sendChat(subChat(basicBot.chat.notghosting, {name1: chat.un, name2: name}));     
+                        else API.sendChat(subChat(ambient.chat.notghosting, {name1: chat.un, name2: name}));
                     }
                 }
             },
@@ -2006,15 +2014,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         if (msg.length !== cmd.length) {
                             function get_id(api_key, fixedtag, func)
                             {
                                 $.getJSON(
-                                    "https://tv.giphy.com/v1/gifs/random?", 
-                                    { 
+                                    "https://tv.giphy.com/v1/gifs/random?",
+                                    {
                                         "format": "json",
                                         "api_key": api_key,
                                         "rating": rating,
@@ -2024,18 +2032,18 @@
                                     {
                                         func(response.data.id);
                                     }
-                                    )
+                                )
                             }
                             var api_key = "dc6zaTOxFJmzC"; // public beta key
-                            var rating = "pg-13"; // PG 13 gifs
+                            var rating = "PG-13"; // PG 13 gifs
                             var tag = msg.substr(cmd.length + 1);
                             var fixedtag = tag.replace(/ /g,"+");
                             var commatag = tag.replace(/ /g,", ");
                             get_id(api_key, tag, function(id) {
                                 if (typeof id !== 'undefined') {
-                                    API.sendChat(subChat(basicBot.chat.validgiftags, {name: chat.un, id: id, tags: commatag}));
+                                    API.sendChat(subChat(ambient.chat.validgiftags, {name: chat.un, id: id, tags: commatag}));
                                 } else {
-                                    API.sendChat(subChat(basicBot.chat.invalidgiftags, {name: chat.un, tags: commatag}));
+                                    API.sendChat(subChat(ambient.chat.invalidgiftags, {name: chat.un, tags: commatag}));
                                 }
                             });
                         }
@@ -2043,8 +2051,8 @@
                             function get_random_id(api_key, func)
                             {
                                 $.getJSON(
-                                    "https://tv.giphy.com/v1/gifs/random?", 
-                                    { 
+                                    "https://tv.giphy.com/v1/gifs/random?",
+                                    {
                                         "format": "json",
                                         "api_key": api_key,
                                         "rating": rating
@@ -2053,15 +2061,15 @@
                                     {
                                         func(response.data.id);
                                     }
-                                    )
+                                )
                             }
                             var api_key = "dc6zaTOxFJmzC"; // public beta key
-                            var rating = "pg-13"; // PG 13 gifs
+                            var rating = "PG-13"; // PG 13 gifs
                             get_random_id(api_key, function(id) {
                                 if (typeof id !== 'undefined') {
-                                    API.sendChat(subChat(basicBot.chat.validgifrandom, {name: chat.un, id: id}));
+                                    API.sendChat(subChat(ambient.chat.validgifrandom, {name: chat.un, id: id}));
                                 } else {
-                                    API.sendChat(subChat(basicBot.chat.invalidgifrandom, {name: chat.un}));
+                                    API.sendChat(subChat(ambient.chat.invalidgifrandom, {name: chat.un}));
                                 }
                             });
                         }
@@ -2075,10 +2083,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var link = "(Updated link coming soon)";
-                        API.sendChat(subChat(basicBot.chat.starterhelp, {link: link}));
+                        API.sendChat('Click the bar at bottom to create a playlist and pull songs from the Youtube search bar it is all pretty self explanatory. When you have a song(s) on your playlist, Click to DJ and you will be put in line to play the first song on your selected playlist. Commands for the bot are all listed here: https://github.com/Paradox68/AmbientBot/blob/master/commands.md');
                     }
                 }
             },
@@ -2089,19 +2097,54 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.historySkip) {
-                            basicBot.settings.historySkip = !basicBot.settings.historySkip;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.historyskip}));
+                        if (ambient.settings.historySkip) {
+                            ambient.settings.historySkip = !ambient.settings.historySkip;
+                            API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.historyskip}));
                         }
                         else {
-                            basicBot.settings.historySkip = !basicBot.settings.historySkip;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.historyskip}));
+                            ambient.settings.historySkip = !ambient.settings.historySkip;
+                            API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.historyskip}));
                         }
                     }
                 }
             },
+
+            /*                  russianCommand: {
+             command: 'russian',
+             rank: 'mod',
+             type: 'exact',
+             functionality: function (chat, cmd) {
+             if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+             if (!ambient.commands.executable(this.rank, chat)) return void (0);
+             else {
+             if (!ambient.room.russiangame.RRStatus) {
+             ambient.room.russiangame.startRussianGame();
+             }
+             }
+             }
+             },
+             /*
+             sitCommand: {
+             command: 'sit',
+             rank: 'user',
+             type: 'exact',
+             functionality: function (chat, cmd) {
+             if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+             if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+             if (ambient.room.russiangame.players >= 6) { return void (0); }
+             if (ambient.room.russiangame.started) { return void (0); }
+             if (ambient.room.russiangame.rusStatus && ambient.room.russiangame.participants.indexOf(chat.uid) < 0) {
+             ambient.room.russiangame.participants.push(chat.uid);
+             API.sendChat('/me ' + chat.un + ' has claimed his seat in Russian Roulette');
+             ambient.room.russiangame.players += 1;
+             if (ambient.room.russiangame.players == 6) {
+             ambient.room.russiangame.started = true;
+             }
+             }
+             }
+             },*/
 
             joinCommand: {
                 command: 'join',
@@ -2109,15 +2152,17 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.room.roulette.rouletteStatus && basicBot.room.roulette.participants.indexOf(chat.uid) < 0) {
-                            basicBot.room.roulette.participants.push(chat.uid);
-                            API.sendChat(subChat(basicBot.chat.roulettejoin, {name: chat.un}));
+                        if (ambient.room.roulette.rouletteStatus && ambient.room.roulette.participants.indexOf(chat.uid) < 0) {
+                            ambient.room.roulette.participants.push(chat.uid);
+                            API.sendChat(subChat(ambient.chat.roulettejoin, {name: chat.un}));
                         }
                     }
                 }
             },
+
+
 
             jointimeCommand: {
                 command: 'jointime',
@@ -2125,17 +2170,17 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var join = basicBot.userUtilities.getJointime(user);
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+                        var join = ambient.userUtilities.getJointime(user);
                         var time = Date.now() - join;
-                        var timeString = basicBot.roomUtilities.msToStr(time);
-                        API.sendChat(subChat(basicBot.chat.jointime, {namefrom: chat.un, username: name, time: timeString}));
+                        var timeString = ambient.roomUtilities.msToStr(time);
+                        API.sendChat(subChat(ambient.chat.jointime, {namefrom: chat.un, username: name, time: timeString}));
                     }
                 }
             },
@@ -2146,7 +2191,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var lastSpace = msg.lastIndexOf(' ');
@@ -2161,18 +2206,18 @@
                             name = msg.substring(cmd.length + 2, lastSpace);
                         }
 
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = ambient.userUtilities.lookupUserName(name);
                         var from = chat.un;
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
 
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
-                        var permTokick = basicBot.userUtilities.getPermission(user.id);
+                        var permFrom = ambient.userUtilities.getPermission(chat.uid);
+                        var permTokick = ambient.userUtilities.getPermission(user.id);
 
                         if (permFrom <= permTokick)
-                            return API.sendChat(subChat(basicBot.chat.kickrank, {name: chat.un}));
+                            return API.sendChat(subChat(ambient.chat.kickrank, {name: chat.un}));
 
                         if (!isNaN(time)) {
-                            API.sendChat(subChat(basicBot.chat.kick, {name: chat.un, username: name, time: time}));
+                            API.sendChat(subChat(ambient.chat.kick, {name: chat.un, username: name, time: time}));
                             if (time > 24 * 60 * 60) API.moderateBanUser(user.id, 1, API.BAN.PERMA);
                             else API.moderateBanUser(user.id, 1, API.BAN.DAY);
                             setTimeout(function (id, name) {
@@ -2180,7 +2225,7 @@
                                 console.log('Unbanned @' + name + '. (' + id + ')');
                             }, time * 60 * 1000, user.id, name);
                         }
-                        else API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -2191,11 +2236,11 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         storeToStorage();
-                        API.sendChat(basicBot.chat.kill);
-                        basicBot.disconnectAPI();
+                        API.sendChat(ambient.chat.kill);
+                        ambient.disconnectAPI();
                         setTimeout(function () {
                             kill();
                         }, 1000);
@@ -2209,22 +2254,22 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(basicBot.chat.currentlang, {language: basicBot.settings.language}));
+                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(ambient.chat.currentlang, {language: ambient.settings.language}));
                         var argument = msg.substring(cmd.length + 1);
 
-                        $.get("https://rawgit.com/Yemasthui/basicBot/master/lang/langIndex.json", function (json) {
+                        $.get("https://rawgit.com/Paradox68/AmbientBot/master/lang/langIndex.json", function (json) {
                             var langIndex = json;
                             var link = langIndex[argument.toLowerCase()];
                             if (typeof link === "undefined") {
-                                API.sendChat(subChat(basicBot.chat.langerror, {link: "http://git.io/vJ9nI"}));
+                                API.sendChat(subChat(ambient.chat.langerror, {link: "http://git.io/vJ9nI"}));
                             }
                             else {
-                                basicBot.settings.language = argument;
+                                ambient.settings.language = argument;
                                 loadChat();
-                                API.sendChat(subChat(basicBot.chat.langset, {language: basicBot.settings.language}));
+                                API.sendChat(subChat(ambient.chat.langset, {language: ambient.settings.language}));
                             }
                         });
                     }
@@ -2237,12 +2282,12 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var ind = basicBot.room.roulette.participants.indexOf(chat.uid);
+                        var ind = ambient.room.roulette.participants.indexOf(chat.uid);
                         if (ind > -1) {
-                            basicBot.room.roulette.participants.splice(ind, 1);
-                            API.sendChat(subChat(basicBot.chat.rouletteleave, {name: chat.un}));
+                            ambient.room.roulette.participants.splice(ind, 1);
+                            API.sendChat(subChat(ambient.chat.rouletteleave, {name: chat.un}));
                         }
                     }
                 }
@@ -2254,23 +2299,23 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var media = API.getMedia();
                         var from = chat.un;
-                        var user = basicBot.userUtilities.lookupUser(chat.uid);
-                        var perm = basicBot.userUtilities.getPermission(chat.uid);
+                        var user = ambient.userUtilities.lookupUser(chat.uid);
+                        var perm = ambient.userUtilities.getPermission(chat.uid);
                         var dj = API.getDJ().id;
                         var isDj = false;
                         if (dj === chat.uid) isDj = true;
                         if (perm >= 1 || isDj) {
                             if (media.format === 1) {
                                 var linkToSong = "http://youtu.be/" + media.cid;
-                                API.sendChat(subChat(basicBot.chat.songlink, {name: from, link: linkToSong}));
+                                API.sendChat(subChat(ambient.chat.songlink, {name: from, link: linkToSong}));
                             }
                             if (media.format === 2) {
                                 SC.get('/tracks/' + media.cid, function (sound) {
-                                    API.sendChat(subChat(basicBot.chat.songlink, {name: from, link: sound.permalink_url}));
+                                    API.sendChat(subChat(ambient.chat.songlink, {name: from, link: sound.permalink_url}));
                                 });
                             }
                         }
@@ -2284,9 +2329,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        basicBot.roomUtilities.booth.lockBooth();
+                        ambient.roomUtilities.booth.lockBooth();
                     }
                 }
             },
@@ -2297,14 +2342,14 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var temp = basicBot.settings.lockdownEnabled;
-                        basicBot.settings.lockdownEnabled = !temp;
-                        if (basicBot.settings.lockdownEnabled) {
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.lockdown}));
+                        var temp = ambient.settings.lockdownEnabled;
+                        ambient.settings.lockdownEnabled = !temp;
+                        if (ambient.settings.lockdownEnabled) {
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.lockdown}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.lockdown}));
+                        else return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.lockdown}));
                     }
                 }
             },
@@ -2315,15 +2360,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.lockGuard) {
-                            basicBot.settings.lockGuard = !basicBot.settings.lockGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.lockguard}));
+                        if (ambient.settings.lockGuard) {
+                            ambient.settings.lockGuard = !ambient.settings.lockGuard;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.lockguard}));
                         }
                         else {
-                            basicBot.settings.lockGuard = !basicBot.settings.lockGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.lockguard}));
+                            ambient.settings.lockGuard = !ambient.settings.lockGuard;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.lockguard}));
                         }
                     }
                 }
@@ -2335,64 +2380,62 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.room.skippable) {
-                            var dj = API.getDJ();
-                            var id = dj.id;
-                            var name = dj.username;
-                            var msgSend = '@' + name + ': ';
-                            basicBot.room.queueable = false;
+                        var dj = API.getDJ();
+                        var id = dj.id;
+                        var name = dj.username;
+                        var msgSend = '@' + name + ': ';
+                        ambient.room.queueable = false;
 
-                            if (chat.message.length === cmd.length) {
-                                API.sendChat(subChat(basicBot.chat.usedlockskip, {name: chat.un}));
-                                basicBot.roomUtilities.booth.lockBooth();
+                        if (chat.message.length === cmd.length) {
+                            API.sendChat(subChat(ambient.chat.usedlockskip, {name: chat.un}));
+                            ambient.roomUtilities.booth.lockBooth();
+                            setTimeout(function (id) {
+                                API.moderateForceSkip();
+                                ambient.room.skippable = false;
+                                setTimeout(function () {
+                                    ambient.room.skippable = true
+                                }, 5 * 1000);
                                 setTimeout(function (id) {
-                                    API.moderateForceSkip();
-                                    basicBot.room.skippable = false;
+                                    ambient.userUtilities.moveUser(id, ambient.settings.lockskipPosition, false);
+                                    ambient.room.queueable = true;
                                     setTimeout(function () {
-                                        basicBot.room.skippable = true
-                                    }, 5 * 1000);
-                                    setTimeout(function (id) {
-                                        basicBot.userUtilities.moveUser(id, basicBot.settings.lockskipPosition, false);
-                                        basicBot.room.queueable = true;
-                                        setTimeout(function () {
-                                            basicBot.roomUtilities.booth.unlockBooth();
-                                        }, 1000);
-                                    }, 1500, id);
-                                }, 1000, id);
-                                return void (0);
+                                        ambient.roomUtilities.booth.unlockBooth();
+                                    }, 1000);
+                                }, 1500, id);
+                            }, 1000, id);
+                            return void (0);
+                        }
+                        var validReason = false;
+                        var msg = chat.message;
+                        var reason = msg.substring(cmd.length + 1);
+                        for (var i = 0; i < ambient.settings.lockskipReasons.length; i++) {
+                            var r = ambient.settings.lockskipReasons[i][0];
+                            if (reason.indexOf(r) !== -1) {
+                                validReason = true;
+                                msgSend += ambient.settings.lockskipReasons[i][1];
                             }
-                            var validReason = false;
-                            var msg = chat.message;
-                            var reason = msg.substring(cmd.length + 1);
-                            for (var i = 0; i < basicBot.settings.lockskipReasons.length; i++) {
-                                var r = basicBot.settings.lockskipReasons[i][0];
-                                if (reason.indexOf(r) !== -1) {
-                                    validReason = true;
-                                    msgSend += basicBot.settings.lockskipReasons[i][1];
-                                }
-                            }
-                            if (validReason) {
-                                API.sendChat(subChat(basicBot.chat.usedlockskip, {name: chat.un}));
-                                basicBot.roomUtilities.booth.lockBooth();
+                        }
+                        if (validReason) {
+                            API.sendChat(subChat(ambient.chat.usedlockskip, {name: chat.un}));
+                            ambient.roomUtilities.booth.lockBooth();
+                            setTimeout(function (id) {
+                                API.moderateForceSkip();
+                                ambient.room.skippable = false;
+                                API.sendChat(msgSend);
+                                setTimeout(function () {
+                                    ambient.room.skippable = true
+                                }, 5 * 1000);
                                 setTimeout(function (id) {
-                                    API.moderateForceSkip();
-                                    basicBot.room.skippable = false;
-                                    API.sendChat(msgSend);
+                                    ambient.userUtilities.moveUser(id, ambient.settings.lockskipPosition, false);
+                                    ambient.room.queueable = true;
                                     setTimeout(function () {
-                                        basicBot.room.skippable = true
-                                    }, 5 * 1000);
-                                    setTimeout(function (id) {
-                                        basicBot.userUtilities.moveUser(id, basicBot.settings.lockskipPosition, false);
-                                        basicBot.room.queueable = true;
-                                        setTimeout(function () {
-                                            basicBot.roomUtilities.booth.unlockBooth();
-                                        }, 1000);
-                                    }, 1500, id);
-                                }, 1000, id);
-                                return void (0);
-                            }
+                                        ambient.roomUtilities.booth.unlockBooth();
+                                    }, 1000);
+                                }, 1500, id);
+                            }, 1000, id);
+                            return void (0);
                         }
                     }
                 }
@@ -2404,15 +2447,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var pos = msg.substring(cmd.length + 1);
                         if (!isNaN(pos)) {
-                            basicBot.settings.lockskipPosition = pos;
-                            return API.sendChat(subChat(basicBot.chat.lockskippos, {name: chat.un, position: basicBot.settings.lockskipPosition}));
+                            ambient.settings.lockskipPosition = pos;
+                            return API.sendChat(subChat(ambient.chat.lockskippos, {name: chat.un, position: ambient.settings.lockskipPosition}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidpositionspecified, {name: chat.un}));
+                        else return API.sendChat(subChat(ambient.chat.invalidpositionspecified, {name: chat.un}));
                     }
                 }
             },
@@ -2423,34 +2466,19 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var lockTime = msg.substring(cmd.length + 1);
                         if (!isNaN(lockTime) && lockTime !== "") {
-                            basicBot.settings.maximumLocktime = lockTime;
-                            return API.sendChat(subChat(basicBot.chat.lockguardtime, {name: chat.un, time: basicBot.settings.maximumLocktime}));
+                            ambient.settings.maximumLocktime = lockTime;
+                            return API.sendChat(subChat(ambient.chat.lockguardtime, {name: chat.un, time: ambient.settings.maximumLocktime}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
 
-            logoutCommand: {
-                command: 'logout',
-                rank: 'manager',
-                type: 'exact',
-                functionality: function (chat, cmd) {
-                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
-                    else {
-                        API.sendChat(subChat(basicBot.chat.logout, {name: chat.un, botname: basicBot.settings.botName}));
-                        setTimeout(function () {
-                            $(".logout").mousedown()
-                        }, 1000);
-                    }
-                }
-            },
 
             maxlengthCommand: {
                 command: 'maxlength',
@@ -2458,15 +2486,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var maxTime = msg.substring(cmd.length + 1);
                         if (!isNaN(maxTime)) {
-                            basicBot.settings.maximumSongLength = maxTime;
-                            return API.sendChat(subChat(basicBot.chat.maxlengthtime, {name: chat.un, time: basicBot.settings.maximumSongLength}));
+                            ambient.settings.maximumSongLength = maxTime;
+                            return API.sendChat(subChat(ambient.chat.maxlengthtime, {name: chat.un, time: ambient.settings.maximumSongLength}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -2477,19 +2505,19 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat('/me MotD: ' + basicBot.settings.motd);
+                        if (msg.length <= cmd.length + 1) return API.sendChat('/me MotD: ' + ambient.settings.motd);
                         var argument = msg.substring(cmd.length + 1);
-                        if (!basicBot.settings.motdEnabled) basicBot.settings.motdEnabled = !basicBot.settings.motdEnabled;
+                        if (!ambient.settings.motdEnabled) ambient.settings.motdEnabled = !ambient.settings.motdEnabled;
                         if (isNaN(argument)) {
-                            basicBot.settings.motd = argument;
-                            API.sendChat(subChat(basicBot.chat.motdset, {msg: basicBot.settings.motd}));
+                            ambient.settings.motd = argument;
+                            API.sendChat(subChat(ambient.chat.motdset, {msg: ambient.settings.motd}));
                         }
                         else {
-                            basicBot.settings.motdInterval = argument;
-                            API.sendChat(subChat(basicBot.chat.motdintervalset, {interval: basicBot.settings.motdInterval}));
+                            ambient.settings.motdInterval = argument;
+                            API.sendChat(subChat(ambient.chat.motdintervalset, {interval: ambient.settings.motdInterval}));
                         }
                     }
                 }
@@ -2501,10 +2529,10 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var firstSpace = msg.indexOf(' ');
                         var lastSpace = msg.lastIndexOf(' ');
                         var pos;
@@ -2517,13 +2545,13 @@
                             pos = parseInt(msg.substring(lastSpace + 1));
                             name = msg.substring(cmd.length + 2, lastSpace);
                         }
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        if (user.id === basicBot.loggedInID) return API.sendChat(subChat(basicBot.chat.addbotwaitlist, {name: chat.un}));
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+                        if (user.id === ambient.loggedInID) return API.sendChat(subChat(ambient.chat.addbotwaitlist, {name: chat.un}));
                         if (!isNaN(pos)) {
-                            API.sendChat(subChat(basicBot.chat.move, {name: chat.un}));
-                            basicBot.userUtilities.moveUser(user.id, pos, false);
-                        } else return API.sendChat(subChat(basicBot.chat.invalidpositionspecified, {name: chat.un}));
+                            API.sendChat(subChat(ambient.chat.move, {name: chat.un}));
+                            ambient.userUtilities.moveUser(user.id, pos, false);
+                        } else return API.sendChat(subChat(ambient.chat.invalidpositionspecified, {name: chat.un}));
                     }
                 }
             },
@@ -2534,10 +2562,10 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var lastSpace = msg.lastIndexOf(' ');
                         var time = null;
                         var name;
@@ -2548,72 +2576,72 @@
                         else {
                             time = msg.substring(lastSpace + 1);
                             if (isNaN(time) || time == "" || time == null || typeof time == "undefined") {
-                                return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                                return API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
                             }
                             name = msg.substring(cmd.length + 2, lastSpace);
                         }
                         var from = chat.un;
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
-                        var permUser = basicBot.userUtilities.getPermission(user.id);
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
+                        var permFrom = ambient.userUtilities.getPermission(chat.uid);
+                        var permUser = ambient.userUtilities.getPermission(user.id);
                         if (permFrom > permUser) {
-                            /*
-                             basicBot.room.mutedUsers.push(user.id);
-                             if (time === null) API.sendChat(subChat(basicBot.chat.mutednotime, {name: chat.un, username: name}));
-                             else {
-                             API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
-                             setTimeout(function (id) {
-                             var muted = basicBot.room.mutedUsers;
-                             var wasMuted = false;
-                             var indexMuted = -1;
-                             for (var i = 0; i < muted.length; i++) {
-                             if (muted[i] === id) {
-                             indexMuted = i;
-                             wasMuted = true;
-                             }
-                             }
-                             if (indexMuted > -1) {
-                             basicBot.room.mutedUsers.splice(indexMuted);
-                             var u = basicBot.userUtilities.lookupUser(id);
-                             var name = u.username;
-                             API.sendChat(subChat(basicBot.chat.unmuted, {name: chat.un, username: name}));
-                             }
-                             }, time * 60 * 1000, user.id);
-                             }
-                             */
+
+                            ambient.room.mutedUsers.push(user.id);
+                            if (time === null) API.sendChat(subChat(ambient.chat.mutednotime, {name: chat.un, username: name}));
+                            else {
+                                API.sendChat(subChat(ambient.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                setTimeout(function (id) {
+                                    var muted = ambient.room.mutedUsers;
+                                    var wasMuted = false;
+                                    var indexMuted = -1;
+                                    for (var i = 0; i < muted.length; i++) {
+                                        if (muted[i] === id) {
+                                            indexMuted = i;
+                                            wasMuted = true;
+                                        }
+                                    }
+                                    if (indexMuted > -1) {
+                                        ambient.room.mutedUsers.splice(indexMuted);
+                                        var u = ambient.userUtilities.lookupUser(id);
+                                        var name = u.username;
+                                        API.sendChat(subChat(ambient.chat.unmuted, {name: chat.un, username: name}));
+                                    }
+                                }, time * 60 * 1000, user.id);
+                            }
+
                             if (time > 45) {
-                                API.sendChat(subChat(basicBot.chat.mutedmaxtime, {name: chat.un, time: "45"}));
+                                API.sendChat(subChat(ambient.chat.mutedmaxtime, {name: chat.un, time: "45"}));
                                 API.moderateMuteUser(user.id, 1, API.MUTE.LONG);
                             }
                             else if (time === 45) {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.LONG);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(ambient.chat.mutedtime, {name: chat.un, username: name, time: time}));
 
                             }
                             else if (time > 30) {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.LONG);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(ambient.chat.mutedtime, {name: chat.un, username: name, time: time}));
                                 setTimeout(function (id) {
                                     API.moderateUnmuteUser(id);
                                 }, time * 60 * 1000, user.id);
                             }
                             else if (time > 15) {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.MEDIUM);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(ambient.chat.mutedtime, {name: chat.un, username: name, time: time}));
                                 setTimeout(function (id) {
                                     API.moderateUnmuteUser(id);
                                 }, time * 60 * 1000, user.id);
                             }
                             else {
                                 API.moderateMuteUser(user.id, 1, API.MUTE.SHORT);
-                                API.sendChat(subChat(basicBot.chat.mutedtime, {name: chat.un, username: name, time: time}));
+                                API.sendChat(subChat(ambient.chat.mutedtime, {name: chat.un, username: name, time: time}));
                                 setTimeout(function (id) {
                                     API.moderateUnmuteUser(id);
                                 }, time * 60 * 1000, user.id);
                             }
                         }
-                        else API.sendChat(subChat(basicBot.chat.muterank, {name: chat.un}));
+                        else API.sendChat(subChat(ambient.chat.muterank, {name: chat.un}));
                     }
                 }
             },
@@ -2624,10 +2652,10 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.opLink === "string")
-                            return API.sendChat(subChat(basicBot.chat.oplist, {link: basicBot.settings.opLink}));
+                        if (typeof ambient.settings.opLink === "string")
+                            return API.sendChat(subChat(ambient.chat.oplist, {link: ambient.settings.opLink}));
                     }
                 }
             },
@@ -2638,46 +2666,41 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(basicBot.chat.pong)
+                        API.sendChat(ambient.chat.pong)
                     }
                 }
             },
 
-            refreshCommand: {
-                command: 'refresh',
-                rank: 'manager',
+            /*refreshCommand: {
+             command: 'refresh',
+             rank: 'manager',
+             type: 'exact',
+             functionality: function (chat, cmd) {
+             if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+             if (!ambient.commands.executable(this.rank, chat)) return void (0);
+             else {
+             storeToStorage();
+             ambient.disconnectAPI();
+             setTimeout(function () {
+             window.location.reload(false);
+             }, 1000);
+             }
+             }
+             },*/
+
+
+
+            madebyCommand: {
+                command: 'madeby',
+                rank: 'user',
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        storeToStorage();
-                        basicBot.disconnectAPI();
-                        setTimeout(function () {
-                            window.location.reload(false);
-                        }, 1000);
-
-                    }
-                }
-            },
-
-            reloadCommand: {
-                command: 'reload',
-                rank: 'bouncer',
-                type: 'exact',
-                functionality: function (chat, cmd) {
-                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
-                    else {
-                        API.sendChat(basicBot.chat.reload);
-                        storeToStorage();
-                        basicBot.disconnectAPI();
-                        kill();
-                        setTimeout(function () {
-                            $.getScript(basicBot.scriptLink);
-                        }, 2000);
+                        API.sendChat('The ' + ambient.settings.botName +  ' was developed and is operated by Paradox VII');
                     }
                 }
             },
@@ -2688,12 +2711,12 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         if (msg.length > cmd.length + 2) {
                             var name = msg.substr(cmd.length + 2);
-                            var user = basicBot.userUtilities.lookupUserName(name);
+                            var user = ambient.userUtilities.lookupUserName(name);
                             if (typeof user !== 'boolean') {
                                 user.lastDC = {
                                     time: null,
@@ -2707,8 +2730,8 @@
                                     }, 1 * 1000, user);
                                 }
                                 else API.moderateRemoveDJ(user.id);
-                            } else API.sendChat(subChat(basicBot.chat.removenotinwl, {name: chat.un, username: name}));
-                        } else API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                            } else API.sendChat(subChat(ambient.chat.removenotinwl, {name: chat.un, username: name}));
+                        } else API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                     }
                 }
             },
@@ -2719,30 +2742,50 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.etaRestriction) {
-                            basicBot.settings.etaRestriction = !basicBot.settings.etaRestriction;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.etarestriction}));
+                        if (ambient.settings.etaRestriction) {
+                            ambient.settings.etaRestriction = !ambient.settings.etaRestriction;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.etarestriction}));
                         }
                         else {
-                            basicBot.settings.etaRestriction = !basicBot.settings.etaRestriction;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.etarestriction}));
+                            ambient.settings.etaRestriction = !ambient.settings.etaRestriction;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.etarestriction}));
                         }
                     }
                 }
             },
 
             rouletteCommand: {
-                command: 'roulette',
+                command: 'raffle',
                 rank: 'mod',
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (!basicBot.room.roulette.rouletteStatus) {
-                            basicBot.room.roulette.startRoulette();
+                        if (!ambient.room.roulette.rouletteStatus) {
+                            ambient.room.roulette.startRoulette();
+                        }
+                    }
+                }
+            },
+
+
+
+            dicegameCommand: {
+                command: 'dicegame',
+                rank: 'mod',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
+                    else {
+                        if (!ambient.room.dicegame.dgStatus) {
+                            ambient.room.dicegame.highestRoll = 0;
+                            ambient.room.dicegame.highestRollerID = null;
+                            ambient.room.dicegame.participants = [];
+                            ambient.room.dicegame.startDiceGame();
                         }
                     }
                 }
@@ -2754,10 +2797,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.rulesLink === "string")
-                            return API.sendChat(subChat(basicBot.chat.roomrules, {link: basicBot.settings.rulesLink}));
+                        return API.sendChat(subChat('Keep it under 7 minutes, if it is over ask for permission. No yellowtext. Only play music that is not mainstream. Trolls will be booted.'));
                     }
                 }
             },
@@ -2768,13 +2810,13 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var from = chat.un;
-                        var woots = basicBot.room.roomstats.totalWoots;
-                        var mehs = basicBot.room.roomstats.totalMehs;
-                        var grabs = basicBot.room.roomstats.totalCurates;
-                        API.sendChat(subChat(basicBot.chat.sessionstats, {name: from, woots: woots, mehs: mehs, grabs: grabs}));
+                        var woots = ambient.room.roomstats.totalWoots;
+                        var mehs = ambient.room.roomstats.totalMehs;
+                        var grabs = ambient.room.roomstats.totalCurates;
+                        API.sendChat(subChat(ambient.chat.sessionstats, {name: from, woots: woots, mehs: mehs, grabs: grabs}));
                     }
                 }
             },
@@ -2785,13 +2827,13 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        API.sendChat(subChat(basicBot.chat.skip, {name: chat.un}));
+                        API.sendChat(subChat(ambient.chat.skip, {name: chat.un}));
                         API.moderateForceSkip();
-                        basicBot.room.skippable = false;
+                        ambient.room.skippable = false;
                         setTimeout(function () {
-                            basicBot.room.skippable = true
+                            ambient.room.skippable = true
                         }, 5 * 1000);
 
                     }
@@ -2804,32 +2846,20 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.songstats) {
-                            basicBot.settings.songstats = !basicBot.settings.songstats;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.songstats}));
+                        if (ambient.settings.songstats) {
+                            ambient.settings.songstats = !ambient.settings.songstats;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.songstats}));
                         }
                         else {
-                            basicBot.settings.songstats = !basicBot.settings.songstats;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.songstats}));
+                            ambient.settings.songstats = !ambient.settings.songstats;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.songstats}));
                         }
                     }
                 }
             },
 
-            sourceCommand: {
-                command: 'source',
-                rank: 'user',
-                type: 'exact',
-                functionality: function (chat, cmd) {
-                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
-                    else {
-                        API.sendChat('/me This bot was created by ' + botCreator + ', but is now maintained by ' + botMaintainer + ".");
-                    }
-                }
-            },
 
             statusCommand: {
                 command: 'status',
@@ -2837,110 +2867,112 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var from = chat.un;
                         var msg = '/me [@' + from + '] ';
 
-                        msg += basicBot.chat.afkremoval + ': ';
-                        if (basicBot.settings.afkRemoval) msg += 'ON';
+                        msg += ambient.chat.afkremoval + ': ';
+                        if (ambient.settings.afkRemoval) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
-                        msg += basicBot.chat.afksremoved + ": " + basicBot.room.afkList.length + '. ';
-                        msg += basicBot.chat.afklimit + ': ' + basicBot.settings.maximumAfk + '. ';
+                        msg += ambient.chat.afksremoved + ": " + ambient.room.afkList.length + '. ';
+                        msg += ambient.chat.afklimit + ': ' + ambient.settings.maximumAfk + '. ';
 
                         msg += 'Bouncer+: ';
-                        if (basicBot.settings.bouncerPlus) msg += 'ON';
-                        else msg += 'OFF';
-                        msg += '. ';
-												
-                        msg += basicBot.chat.blacklist + ': ';
-                        if (basicBot.settings.blacklistEnabled) msg += 'ON';
+                        if (ambient.settings.bouncerPlus) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.lockguard + ': ';
-                        if (basicBot.settings.lockGuard) msg += 'ON';
+                        msg += ambient.chat.blacklist + ': ';
+                        if (ambient.settings.blacklistEnabled) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.cycleguard + ': ';
-                        if (basicBot.settings.cycleGuard) msg += 'ON';
+                        msg += ambient.chat.lockguard + ': ';
+                        if (ambient.settings.lockGuard) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.timeguard + ': ';
-                        if (basicBot.settings.timeGuard) msg += 'ON';
+                        msg += ambient.chat.cycleguard + ': ';
+                        if (ambient.settings.cycleGuard) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.chatfilter + ': ';
-                        if (basicBot.settings.filterChat) msg += 'ON';
+                        msg += ambient.chat.timeguard + ': ';
+                        if (ambient.settings.timeGuard) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.historyskip + ': ';
-                        if (basicBot.settings.historySkip) msg += 'ON';
+                        msg += ambient.chat.chatfilter + ': ';
+                        if (ambient.settings.filterChat) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.voteskip + ': ';
-                        if (basicBot.settings.voteSkip) msg += 'ON';
+                        msg += ambient.chat.historyskip + ': ';
+                        if (ambient.settings.historySkip) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.cmddeletion + ': ';
-                        if (basicBot.settings.cmdDeletion) msg += 'ON';
+                        msg += ambient.chat.voteskip + ': ';
+                        if (ambient.settings.voteSkip) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
 
-                        msg += basicBot.chat.autoskip + ': ';
-                        if (basicBot.room.autoskip) msg += 'ON';
+                        msg += ambient.chat.cmddeletion + ': ';
+                        if (ambient.settings.cmdDeletion) msg += 'ON';
                         else msg += 'OFF';
                         msg += '. ';
-                        
-                        var launchT = basicBot.room.roomstats.launchTime;
+
+                        msg += ambient.chat.autoskip + ': ';
+                        if (ambient.room.autoskip) msg += 'ON';
+                        else msg += 'OFF';
+                        msg += '. ';
+
+                        var launchT = ambient.room.roomstats.launchTime;
                         var durationOnline = Date.now() - launchT;
-                        var since = basicBot.roomUtilities.msToStr(durationOnline);
-                        msg += subChat(basicBot.chat.activefor, {time: since});
-
+                        var since = ambient.roomUtilities.msToStr(durationOnline);
+                        var msg2 = '';
+                        msg2 += subChat(ambient.chat.activefor, {time: since});
+                        API.sendchat(msg2);
                         return API.sendChat(msg);
+
                     }
                 }
             },
 
             swapCommand: {
                 command: 'swap',
-                rank: 'mod',
+                rank: 'bouncer',
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var firstSpace = msg.indexOf(' ');
                         var lastSpace = msg.lastIndexOf(' ');
                         var name1 = msg.substring(cmd.length + 2, lastSpace);
                         var name2 = msg.substring(lastSpace + 2);
-                        var user1 = basicBot.userUtilities.lookupUserName(name1);
-                        var user2 = basicBot.userUtilities.lookupUserName(name2);
-                        if (typeof user1 === 'boolean' || typeof user2 === 'boolean') return API.sendChat(subChat(basicBot.chat.swapinvalid, {name: chat.un}));
-                        if (user1.id === basicBot.loggedInID || user2.id === basicBot.loggedInID) return API.sendChat(subChat(basicBot.chat.addbottowaitlist, {name: chat.un}));
+                        var user1 = ambient.userUtilities.lookupUserName(name1);
+                        var user2 = ambient.userUtilities.lookupUserName(name2);
+                        if (typeof user1 === 'boolean' || typeof user2 === 'boolean') return API.sendChat(subChat(ambient.chat.swapinvalid, {name: chat.un}));
+                        if (user1.id === ambient.loggedInID || user2.id === ambient.loggedInID) return API.sendChat(subChat(ambient.chat.addbottowaitlist, {name: chat.un}));
                         var p1 = API.getWaitListPosition(user1.id) + 1;
                         var p2 = API.getWaitListPosition(user2.id) + 1;
-                        if (p1 < 0 || p2 < 0) return API.sendChat(subChat(basicBot.chat.swapwlonly, {name: chat.un}));
-                        API.sendChat(subChat(basicBot.chat.swapping, {'name1': name1, 'name2': name2}));
+                        if (p1 < 0 || p2 < 0) return API.sendChat(subChat(ambient.chat.swapwlonly, {name: chat.un}));
+                        API.sendChat(subChat(ambient.chat.swapping, {'name1': name1, 'name2': name2}));
                         if (p1 < p2) {
-                            basicBot.userUtilities.moveUser(user2.id, p1, false);
+                            ambient.userUtilities.moveUser(user2.id, p1, false);
                             setTimeout(function (user1, p2) {
-                                basicBot.userUtilities.moveUser(user1.id, p2, false);
+                                ambient.userUtilities.moveUser(user1.id, p2, false);
                             }, 2000, user1, p2);
                         }
                         else {
-                            basicBot.userUtilities.moveUser(user1.id, p2, false);
+                            ambient.userUtilities.moveUser(user1.id, p2, false);
                             setTimeout(function (user2, p1) {
-                                basicBot.userUtilities.moveUser(user2.id, p1, false);
+                                ambient.userUtilities.moveUser(user2.id, p1, false);
                             }, 2000, user2, p1);
                         }
                     }
@@ -2953,10 +2985,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.themeLink === "string")
-                            API.sendChat(subChat(basicBot.chat.genres, {link: basicBot.settings.themeLink}));
+                        API.sendChat(subChat('Theme: \n Share your favorite deep, dark, trippy, chill or unknown tracks. Producers are welcome too, and you will find loads of OC being played. If it SOUNDS mainstream, dont play it.'));
                     }
                 }
             },
@@ -2967,15 +2998,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.timeGuard) {
-                            basicBot.settings.timeGuard = !basicBot.settings.timeGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.timeguard}));
+                        if (ambient.settings.timeGuard) {
+                            ambient.settings.timeGuard = !ambient.settings.timeGuard;
+                            return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.timeguard}));
                         }
                         else {
-                            basicBot.settings.timeGuard = !basicBot.settings.timeGuard;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.timeguard}));
+                            ambient.settings.timeGuard = !ambient.settings.timeGuard;
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.timeguard}));
                         }
 
                     }
@@ -2988,33 +3019,33 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        var temp = basicBot.settings.blacklistEnabled;
-                        basicBot.settings.blacklistEnabled = !temp;
-                        if (basicBot.settings.blacklistEnabled) {
-                          return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.blacklist}));
+                        var temp = ambient.settings.blacklistEnabled;
+                        ambient.settings.blacklistEnabled = !temp;
+                        if (ambient.settings.blacklistEnabled) {
+                            return API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.blacklist}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.blacklist}));
+                        else return API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.blacklist}));
                     }
                 }
             },
-						
+
             togglemotdCommand: {
                 command: 'togglemotd',
                 rank: 'bouncer',
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.motdEnabled) {
-                            basicBot.settings.motdEnabled = !basicBot.settings.motdEnabled;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.motd}));
+                        if (ambient.settings.motdEnabled) {
+                            ambient.settings.motdEnabled = !ambient.settings.motdEnabled;
+                            API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.motd}));
                         }
                         else {
-                            basicBot.settings.motdEnabled = !basicBot.settings.motdEnabled;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.motd}));
+                            ambient.settings.motdEnabled = !ambient.settings.motdEnabled;
+                            API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.motd}));
                         }
                     }
                 }
@@ -3026,15 +3057,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.voteSkip) {
-                            basicBot.settings.voteSkip = !basicBot.settings.voteSkip;
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.voteskip}));
+                        if (ambient.settings.voteSkip) {
+                            ambient.settings.voteSkip = !ambient.settings.voteSkip;
+                            API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.voteskip}));
                         }
                         else {
-                            basicBot.settings.voteSkip = !basicBot.settings.voteSkip;
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.voteskip}));
+                            ambient.settings.voteSkip = !ambient.settings.voteSkip;
+                            API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.voteskip}));
                         }
                     }
                 }
@@ -3046,7 +3077,7 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         $(".icon-population").click();
                         $(".icon-ban").click();
@@ -3066,7 +3097,7 @@
                             }
                             if (!found) {
                                 $(".icon-chat").click();
-                                return API.sendChat(subChat(basicBot.chat.notbanned, {name: chat.un}));
+                                return API.sendChat(subChat(ambient.chat.notbanned, {name: chat.un}));
                             }
                             API.moderateUnbanUser(bannedUser.id);
                             console.log("Unbanned " + name);
@@ -3084,9 +3115,9 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        basicBot.roomUtilities.booth.unlockBooth();
+                        ambient.roomUtilities.booth.unlockBooth();
                     }
                 }
             },
@@ -3097,52 +3128,51 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        var permFrom = basicBot.userUtilities.getPermission(chat.uid);
-                        /**
-                         if (msg.indexOf('@') === -1 && msg.indexOf('all') !== -1) {
+                        var permFrom = ambient.userUtilities.getPermission(chat.uid);
+
+                        if (msg.indexOf('@') === -1 && msg.indexOf('all') !== -1) {
                             if (permFrom > 2) {
-                                basicBot.room.mutedUsers = [];
-                                return API.sendChat(subChat(basicBot.chat.unmutedeveryone, {name: chat.un}));
+                                ambient.room.mutedUsers = [];
+                                return API.sendChat(subChat(ambient.chat.unmutedeveryone, {name: chat.un}));
                             }
-                            else return API.sendChat(subChat(basicBot.chat.unmuteeveryonerank, {name: chat.un}));
+                            else return API.sendChat(subChat(ambient.chat.unmuteeveryonerank, {name: chat.un}));
                         }
-                         **/
+
                         var from = chat.un;
                         var name = msg.substr(cmd.length + 2);
 
-                        var user = basicBot.userUtilities.lookupUserName(name);
+                        var user = ambient.userUtilities.lookupUserName(name);
 
-                        if (typeof user === 'boolean') return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        if (typeof user === 'boolean') return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
 
-                        var permUser = basicBot.userUtilities.getPermission(user.id);
+                        var permUser = ambient.userUtilities.getPermission(user.id);
                         if (permFrom > permUser) {
-                            /*
-                             var muted = basicBot.room.mutedUsers;
-                             var wasMuted = false;
-                             var indexMuted = -1;
-                             for (var i = 0; i < muted.length; i++) {
-                             if (muted[i] === user.id) {
-                             indexMuted = i;
-                             wasMuted = true;
-                             }
 
-                             }
-                             if (!wasMuted) return API.sendChat(subChat(basicBot.chat.notmuted, {name: chat.un}));
-                             basicBot.room.mutedUsers.splice(indexMuted);
-                             API.sendChat(subChat(basicBot.chat.unmuted, {name: chat.un, username: name}));
-                             */
+                            var muted = ambient.room.mutedUsers;
+                            var wasMuted = false;
+                            var indexMuted = -1;
+                            for (var i = 0; i < muted.length; i++) {
+                                if (muted[i] === user.id) {
+                                    indexMuted = i;
+                                    wasMuted = true;
+                                }
+                            }
+                            if (!wasMuted) return API.sendChat(subChat(ambient.chat.notmuted, {name: chat.un}));
+                            ambient.room.mutedUsers.splice(indexMuted);
+                            API.sendChat(subChat(ambient.chat.unmuted, {name: chat.un, username: name}));
+
                             try {
                                 API.moderateUnmuteUser(user.id);
-                                API.sendChat(subChat(basicBot.chat.unmuted, {name: chat.un, username: name}));
+                                API.sendChat(subChat(ambient.chat.unmuted, {name: chat.un, username: name}));
                             }
                             catch (e) {
-                                API.sendChat(subChat(basicBot.chat.notmuted, {name: chat.un}));
+                                API.sendChat(subChat(ambient.chat.notmuted, {name: chat.un}));
                             }
                         }
-                        else API.sendChat(subChat(basicBot.chat.unmuterank, {name: chat.un}));
+                        else API.sendChat(subChat(ambient.chat.unmuterank, {name: chat.un}));
                     }
                 }
             },
@@ -3153,15 +3183,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
                         var cd = msg.substring(cmd.length + 1);
                         if (!isNaN(cd)) {
-                            basicBot.settings.commandCooldown = cd;
-                            return API.sendChat(subChat(basicBot.chat.commandscd, {name: chat.un, time: basicBot.settings.commandCooldown}));
+                            ambient.settings.commandCooldown = cd;
+                            return API.sendChat(subChat(ambient.chat.commandscd, {name: chat.un, time: ambient.settings.commandCooldown}));
                         }
-                        else return API.sendChat(subChat(basicBot.chat.invalidtime, {name: chat.un}));
+                        else return API.sendChat(subChat(ambient.chat.invalidtime, {name: chat.un}));
                     }
                 }
             },
@@ -3172,15 +3202,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.usercommandsEnabled) {
-                            API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.usercommands}));
-                            basicBot.settings.usercommandsEnabled = !basicBot.settings.usercommandsEnabled;
+                        if (ambient.settings.usercommandsEnabled) {
+                            API.sendChat(subChat(ambient.chat.toggleoff, {name: chat.un, 'function': ambient.chat.usercommands}));
+                            ambient.settings.usercommandsEnabled = !ambient.settings.usercommandsEnabled;
                         }
                         else {
-                            API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.usercommands}));
-                            basicBot.settings.usercommandsEnabled = !basicBot.settings.usercommandsEnabled;
+                            API.sendChat(subChat(ambient.chat.toggleon, {name: chat.un, 'function': ambient.chat.usercommands}));
+                            ambient.settings.usercommandsEnabled = !ambient.settings.usercommandsEnabled;
                         }
                     }
                 }
@@ -3192,16 +3222,16 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length === cmd.length) return API.sendChat(subChat(basicBot.chat.nouserspecified, {name: chat.un}));
+                        if (msg.length === cmd.length) return API.sendChat(subChat(ambient.chat.nouserspecified, {name: chat.un}));
                         var name = msg.substring(cmd.length + 2);
-                        var user = basicBot.userUtilities.lookupUserName(name);
-                        if (user === false) return API.sendChat(subChat(basicBot.chat.invaliduserspecified, {name: chat.un}));
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        if (user === false) return API.sendChat(subChat(ambient.chat.invaliduserspecified, {name: chat.un}));
                         var vratio = user.votes;
                         var ratio = vratio.woot / vratio.meh;
-                        API.sendChat(subChat(basicBot.chat.voteratio, {name: chat.un, username: name, woot: vratio.woot, mehs: vratio.meh, ratio: ratio.toFixed(2)}));
+                        API.sendChat(subChat(ambient.chat.voteratio, {name: chat.un, username: name, woot: vratio.woot, mehs: vratio.meh, ratio: ratio.toFixed(2)}));
                     }
                 }
             },
@@ -3212,18 +3242,15 @@
                 type: 'startsWith',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
                         var msg = chat.message;
-                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(basicBot.chat.voteskiplimit, {name: chat.un, limit: basicBot.settings.voteSkipLimit}));
+                        if (msg.length <= cmd.length + 1) return API.sendChat(subChat(ambient.chat.voteskiplimit, {name: chat.un, limit: ambient.settings.voteSkipLimit}));
                         var argument = msg.substring(cmd.length + 1);
-                        if (!basicBot.settings.voteSkip) basicBot.settings.voteSkip = !basicBot.settings.voteSkip;
-                        if (isNaN(argument)) {
-                            API.sendChat(subChat(basicBot.chat.voteskipinvalidlimit, {name: chat.un}));
-                        }
-                        else {
-                            basicBot.settings.voteSkipLimit = argument;
-                            API.sendChat(subChat(basicBot.chat.voteskipsetlimit, {name: chat.un, limit: basicBot.settings.voteSkipLimit}));
+                        if (!ambient.settings.voteSkip) ambient.settings.voteSkip = !ambient.settings.voteSkip;
+                        if (!isNaN(argument)) {
+                            ambient.settings.voteSkipLimit = argument;
+                            API.sendChat(subChat(ambient.chat.voteskipsetlimit, {name: chat.un, limit: ambient.settings.voteSkipLimit}));
                         }
                     }
                 }
@@ -3235,15 +3262,15 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (basicBot.settings.welcome) {
-                            basicBot.settings.welcome = !basicBot.settings.welcome;
-                            return API.sendChat(subChat(basicBot.chat.toggleoff, {name: chat.un, 'function': basicBot.chat.welcomemsg}));
+                        if (ambient.settings.welcome) {
+                            ambient.settings.welcome = !ambient.settings.welcome;
+                            API.sendChat(subChat('/me Welcome Messages disabled.'));
                         }
                         else {
-                            basicBot.settings.welcome = !basicBot.settings.welcome;
-                            return API.sendChat(subChat(basicBot.chat.toggleon, {name: chat.un, 'function': basicBot.chat.welcomemsg}));
+                            ambient.settings.welcome = !ambient.settings.welcome;
+                            API.sendChat(subChat('/me Welcome Messages enabled.'));
                         }
                     }
                 }
@@ -3255,116 +3282,1315 @@
                 type: 'exact',
                 functionality: function (chat, cmd) {
                     if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    if (!ambient.commands.executable(this.rank, chat)) return void (0);
                     else {
-                        if (typeof basicBot.settings.website === "string")
-                            API.sendChat(subChat(basicBot.chat.website, {link: basicBot.settings.website}));
+                        if (typeof ambient.settings.website === "string")
+                            API.sendChat(subChat(ambient.chat.website, {link: ambient.settings.website}));
                     }
                 }
             },
 
-            whoisCommand: {
-                command: 'whois',
-                rank: 'bouncer',
-                type: 'startsWith',
-                functionality: function (chat, cmd) {
-                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
-                    else {
-                        var msg = chat.message;
-                        var name;
-                        if (msg.length === cmd.length) name = chat.un;
-                        else {
-                            name = msg.substr(cmd.length + 2);
-                        }
-                        users = API.getUsers();
-                        var len = users.length;
-                        for (var i = 0; i < len; ++i){
-                            if (users[i].username == name){
-                                var id = users[i].id;
-                                var avatar = API.getUser(id).avatarID;
-                                var level = API.getUser(id).level;
-                                var rawjoined = API.getUser(id).joined;
-                                var joined = rawjoined.substr(0, 10);
-                                var rawlang = API.getUser(id).language;
-                                if (rawlang == "en"){
-                                    var language = "English";
-                                } else if (rawlang == "bg"){
-                                    var language = "Bulgarian";
-                                } else if (rawlang == "cs"){
-                                    var language = "Czech";
-                                } else if (rawlang == "fi"){
-                                    var language = "Finnish"
-                                } else if (rawlang == "fr"){
-                                    var language = "French"
-                                } else if (rawlang == "pt"){
-                                    var language = "Portuguese"
-                                } else if (rawlang == "zh"){
-                                    var language = "Chinese"
-                                } else if (rawlang == "sk"){
-                                    var language = "Slovak"
-                                } else if (rawlang == "nl"){
-                                    var language = "Dutch"
-                                } else if (rawlang == "ms"){
-                                    var language = "Malay"
-                                }
-                                var rawstatus = API.getUser(id).status;
-                                if (rawstatus == "0"){
-                                    var status = "Available";
-                                } else if (rawstatus == "1"){
-                                    var status = "Away";
-                                } else if (rawstatus == "2"){
-                                    var status = "Working";
-                                } else if (rawstatus == "3"){
-                                    var status = "Gaming"
-                                }
-                                var rawrank = API.getUser(id).role;
-                                if (rawrank == "0"){
-                                    var rank = "User";
-                                } else if (rawrank == "1"){
-                                    var rank = "Resident DJ";
-                                } else if (rawrank == "2"){
-                                    var rank = "Bouncer";
-                                } else if (rawrank == "3"){
-                                    var rank = "Manager"
-                                } else if (rawrank == "4"){
-                                    var rank = "Co-Host"
-                                } else if (rawrank == "5"){
-                                    var rank = "Host"
-                                } else if (rawrank == "7"){
-                                    var rank = "Brand Ambassador"
-                                } else if (rawrank == "10"){
-                                    var rank = "Admin"
-                                }
-                                var slug = API.getUser(id).slug;
-                                if (typeof slug !== 'undefined') {
-                                    var profile = ", Profile: http://plug.dj/@/" + slug;
-                                } else {
-                                    var profile = "";
-                                }
-
-                                API.sendChat(subChat(basicBot.chat.whois, {name1: chat.un, name2: name, id: id, avatar: avatar, profile: profile, language: language, level: level, status: status, joined: joined, rank: rank}));
-                            }
-                        }
-                    }
-                }
-            },
-
-            youtubeCommand: {
-                command: 'youtube',
+          helloCommand: {
+                command: ['hello', 'hi', 'hey'],
                 rank: 'user',
                 type: 'exact',
                 functionality: function (chat, cmd) {
-                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
-                    else {
-                        if (typeof basicBot.settings.youtubeLink === "string")
-                            API.sendChat(subChat(basicBot.chat.youtube, {name: chat.un, link: basicBot.settings.youtubeLink}));
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/C4rnIsb.gif'));
+                }
+            },
+
+
+
+            dance1Command: {
+                command: 'dance',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/ZDawAwF.webm'));
+                }
+            },
+            drop1Command: {
+                command: 'drop',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/TUUwcEC.gif'));
+                }
+            },
+            drop2Command: {
+                command: 'drop1',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/ELEO7nP.gif'));
+                }
+            },
+            dance2Command: {
+                command: 'dance1',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/H9nADqS.gif'));
+                }
+            },
+            dance3Command: {
+                command: 'dance2',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/t71qeT1.gif'));
+                }
+            },
+            dance4Command: {
+                command: 'dance3',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/TqezZCP.gif'));
+                }
+            },
+            dance5Command: {
+                command: 'dance4',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('http://i.imgur.com/XnCeorl.gif'));
+                }
+            },
+            sourceCommand: {
+                command: 'source',
+                rank: 'user',
+                type: 'exact',
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                    API.sendChat(subChat('The open source code for ' + ambient.settings.botName +  'is available at: https://github.com/Paradox68/AmbientBot'));
+                        }
+                },
+                dance6Command: {
+                    command: 'dance5',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/IUoOZDo.gif'));
+                    }
+                },
+                dance7Command: {
+                    command: 'dance6',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/jKfD4m3.gif'));
+                    }
+                },
+                dance8Command: {
+                    command: 'dance7',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/pIxt2H0.gif'));
+                    }
+                },
+                dance9Command: {
+                    command: 'dance8',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/YieC5Ls.gif'));
+                    }
+                },
+                dance10Command: {
+                    command: 'dance9',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/cKT7CNU.gif'));
+                    }
+                },
+                dance11Command: {
+                    command: 'dance10',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/6vfolCh.gif'));
+                    }
+                },
+                dance12Command: {
+                    command: 'dance11',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/pQLee14.gif'));
+                    }
+                },
+                dance13Command: {
+                    command: 'dance12',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/sCGlr4m.gif'));
+                    }
+                },
+                dance14Command: {
+                    command: 'dance13',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/Q7T2K8o.gif'));
+                    }
+                },
+                faggot1Command: {
+                    command: 'faggot',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/QJNr8sP.jpg'));
+                    }
+                },
+                faggot2Command: {
+                    command: 'faggot1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/9We2dVP.gif'));
+                    }
+                },
+                faggot3Command: {
+                    command: 'faggot2',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/JSZQTpU.gif'));
+                    }
+                },
+                faggot4Command: {
+                    command: 'faggot3',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/HfQ3gRA.gif'));
+                    }
+                },
+                faggot5Command: {
+                    command: 'faggot4',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/uFLW7YK.gif'));
+                    }
+                },
+                faggot6Command: {
+                    command: 'faggot5',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/hbAtPOA.gif'));
+                    }
+                },
+                faggot7Command: {
+                    command: 'faggot6',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/g9rZoWs.gif'));
+                    }
+                },
+
+                regret1Command: {
+                    command: 'regret',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/WvvxQTk.gif'));
+                    }
+                },
+                fuckyou1Command: {
+                    command: 'fuckyou',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/1eh3dg1.gif'));
+                    }
+                },
+                fuckyou2Command: {
+                    command: 'fuckyou1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/Oh8h3Pt.gif'));
+                    }
+                },
+                fuckyou3Command: {
+                    command: 'fuckyou2',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/NH7LYM9.gif'));
+                    }
+                },
+                fuckyou4Command: {
+                    command: 'fuckyou3',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/NtdtELQ.gif'));
+                    }
+                },
+                fuckyou5Command: {
+                    command: 'fuckyou4',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/qE3MNo5.gif'));
+                    }
+                },
+                fuckyou6Command: {
+                    command: 'fuckyou5',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/AyObzfk.webm'));
+                    }
+                },
+                fuckyou7Command: {
+                    command: 'fuckyou6',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/jCUu9nY.webm'));
+                    }
+                },
+                fuckyou8Command: {
+                    command: 'fuckyou7',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/WR4g4S7.gif'));
+                    }
+                },
+                fuckyou9Command: {
+                    command: 'fuckyou8',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/ntV8Vvg.gif'));
+                    }
+                },
+                fuckyou10Command: {
+                    command: 'fuckyou9',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/btXKV0w.webm'));
+                    }
+                },
+                fuckyou11Command: {
+                    command: 'fuckyou10',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/wlTqw2a.gif'));
+                    }
+                },
+                lockposCommand: {
+                    command: 'lockpos',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        if (API.getWaitListPosition(id) == 1) {
+                            if (ambient.settings.spotLock === "none") {
+                                API.sendChat('/me ' + chat.un + ' has locked their spot at position 1 in the queue!');
+                                ambient.settings.spotLock = chat.un;
+                            }
+                        }
+                    }
+                },
+                guessCommand: {
+                    command: 'guess',
+                    rank: 'user',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (chat.message.length < 7) { return void (0); }
+                        if (!ambient.room.numberG.active) { return void (0); }
+                        var gn = chat.message.substring(cmd.length + 1);
+                        var gni = parseInt(gn);
+                        if (gni === ambient.room.numberG.currentNumber || gn === ambient.room.numberG.currentNumber.toString()) {
+                            ambient.room.numberG.endNumberGame(chat.uid);
+                        } else {
+                            API.sendChat('/me @' + chat.un + ' incorrectly guessed ' + gni + '.');
+                            setTimeout(function () {
+                                API.moderateDeleteChat(chat.cid);
+                                API.chatLog('deletion 10');
+                            }, 2 * 1000, chat.cid);
+                        }
+                    }
+                },
+
+
+                diffCommand: {
+                    command: 'diff',
+                    rank: 'mod',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                        if (chat.message.length < 6) { return void (0); }
+                        var gn = chat.message.substring(cmd.length + 1);
+                        var gni = parseInt(gn);
+                        ambient.room.numberG.difficulty = gni;
+                        var tos = "undefined";
+                        if (gni === 1) {
+                            tos = "easy";
+                        }
+                        if (gni === 2) {
+                            tos = "medium";
+                        }
+                        if (gni === 3) {
+                            tos = "hard";
+                        }
+                        API.sendChat('/me Number Game Difficulty set to: ' + tos + '.');
+                    }
+                },
+                
+                buyrollCommand: {
+                    command: 'buyroll',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (9); }
+                        if (!ambient.room.dicegame.dgStatus) { return void (0); }
+                        var myGold = 0;
+                        if (typeof ambient.settings.monies[chat.uid] !== 'undefined') {
+                            myGold = ambient.settings.monies[chat.uid];
+                        }
+                  if (ambient.room.dicegame.participants.indexOf(chat.uid) >= 0) {
+                        if (myGold >= 50) {
+                        var num = Math.floor((Math.random() * 999) + 1);
+                        var nts = num.toString();
+                        ambient.room.cash.updateUserCurrency(chat.uid, -50);
+                        if (num > ambient.room.dicegame.highestRoll) {
+                            ambient.room.dicegame.highestRollerID = "undefined";
+                            ambient.room.dicegame.highestRoll = 0;
+                            ambient.room.dicegame.winning = "nobody";
+                            this.countdown = setTimeout(function () {
+                                API.sendChat('/me ' + chat.un + ' bought a roll and got ' + nts + ' and is now winning the Dice Game');
+                                ambient.room.dicegame.highestRoll = num;
+                                ambient.room.dicegame.winning = chat.un;
+                                ambient.room.dicegame.highestRollerID = chat.uid;
+                            }, 300);
+
+                        } else {
+                            API.sendChat('/me ' + chat.un + ' bought a roll and got ' + nts + '.');
+                        }
+                            }
+                        } else {
+                        ambient.room.dicegame.participants.push(chat.uid);
+                        if (num > ambient.room.dicegame.highestRoll) {
+                            ambient.room.dicegame.highestRollerID = "undefined";
+                            ambient.room.dicegame.highestRoll = 0;
+                            ambient.room.dicegame.winning = "nobody";
+                            this.countdown = setTimeout(function () {
+                                API.sendChat('/me ' + chat.un + ' has rolled ' + nts + ' and is now winning the Dice Game');
+                                ambient.room.dicegame.highestRoll = num;
+                                ambient.room.dicegame.winning = chat.un;
+                                ambient.room.dicegame.highestRollerID = chat.uid;
+                            }, 300);
+
+                        } else {
+                            API.sendChat('/me ' + chat.un + ' has rolled ' + nts + '.');
+                        }
+                        }
+                    }
+                },
+
+                gibmeCommand: {
+                    command: 'gib',
+                    rank: 'manager',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                            var msg = chat.message;
+                            var name;
+                            var amt = 1;
+                            if (msg.length === cmd.length) { 
+                                name = chat.un;
+                                amt = msg.substr(cmd.length + 2);
+                            } else {
+                                name = msg.substr(cmd.length + 2);
+                                amt = msg.substr(cmd.length + name.length + 3);
+                            }
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        ambient.room.cash.updateUserCurrency(user.id, amt);
+                        API.sendChat('/me ' + chat.un + ' has given ' + name + ' ' + amt + ' AmbientTokens.');
+                    }
+                },
+                
+               cmdBLCommand: {
+                    command: 'cmdbl',
+                    rank: 'bouncer',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                        if (chat.un.indexOf('Paradox') === -1) { return void (0); }
+                            var msg = chat.message;
+                            var name;
+                                name = msg.substr(cmd.length + 2);
+                        var user = ambient.userUtilities.lookupUserName(name);
+                        ambient.room.cmdBL.push(user.id);
+                        API.sendChat('/me ' + chat.un + ' has blacklisted @' + name + ' from the commands function!');
+                    }
+                },
+                 uncmdBLCommand: {
+                    command: 'uncmdbl',
+                    rank: 'bouncer',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                        if (chat.un.indexOf('Paradox') === -1) { return void (0); }
+                            var msg = chat.message;
+                            var name;
+                                name = msg.substr(cmd.length + 2);
+                        var user = ambient.userUtilities.lookupUserName(name);
+                         for (var i = 0; i < ambient.room.cmdBL.length; i++) {
+                             if (ambient.room.cmdBL[i] === user.id) {
+                                                         ambient.room.cmdBL.splice(i, 1);
+                        API.sendChat('/me ' + chat.un + ' has removed @' + name + ' from the commands blacklist!');
+                             }
+                         }
+                    }
+                },
+                    showcmdBLCommand: {
+                    command: 'showcmdbl',
+                    rank: 'bouncer',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                        if (chat.un.indexOf('Paradox') === -1) { return void (0); }
+                        var toS = "/me";
+                        for (var i = 0; i < ambient.room.cmdBL.length; i++) {
+                            toS += " " + ambient.room.cmdBL[i] + ",";
+                        }
+                        API.sendChat(toS);
+                    }
+                    },
+
+                balanceCommand: {
+                    command: 'balance',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                        if (typeof ambient.settings.monies[chat.uid] !== 'undefined') {
+                            API.sendChat(chat.un + ' has a balance of ' + ambient.settings.monies[chat.uid] + ' AmbientTokens.');
+                        } else {
+                            API.sendChat('/me @' + chat.un + ' has no AmbientTokens.');
+                        }
+
+                    }
+                },
+
+
+                rollCommand: {
+                    command: 'roll',
+                    rank: 'user',
+                    type: 'exact',
+                    countdown: null,
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        if (!ambient.room.dicegame.dgStatus) { return void (0); }
+                        if (ambient.room.dicegame.participants.indexOf(chat.uid) >= 0) { return void (0); }
+                        var num = Math.floor((Math.random() * 999) + 1);
+                        var nts = num.toString();
+
+                        ambient.room.dicegame.participants.push(chat.uid);
+                        if (num > ambient.room.dicegame.highestRoll) {
+                            ambient.room.dicegame.highestRollerID = "undefined";
+                            ambient.room.dicegame.highestRoll = 0;
+                            ambient.room.dicegame.winning = "nobody";
+                            this.countdown = setTimeout(function () {
+                                API.sendChat('/me ' + chat.un + ' has rolled ' + nts + ' and is now winning the Dice Game');
+                                ambient.room.dicegame.highestRoll = num;
+                                ambient.room.dicegame.winning = chat.un;
+                                ambient.room.dicegame.highestRollerID = chat.uid;
+                            }, 300);
+
+                        } else {
+                            API.sendChat('/me ' + chat.un + ' has rolled ' + nts + '.');
+                        }
+                    }
+                },
+
+                jamesCommand: {
+                    command: 'james',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/BvApgZl.gif'));
+                    }
+                },
+                bugdjCommand: {
+                    command: 'bug',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/vYEOrkT.png'));
+                    }
+                },
+                penisCommand: {
+                    command: 'penis',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/c4BWZyz.webm'));
+                    }
+                },
+                idgafCommand: {
+                    command: 'idgaf',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/tZ1Gvzy.gif'));
+                    }
+                },
+                allowitCommand: {
+                    command: 'allowit',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/EI6OEYh.gif'));
+                    }
+                },
+                refresh1Command: {
+                    command: 'refresh',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/MWnOXM6.gif'));
+                    }
+                },
+                fuckthis1Command: {
+                    command: 'fuckthis',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/GMEMmZj.webm'));
+                    }
+                },
+                shutup1Command: {
+                    command: 'shutup',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/u1dIcAN.webm'));
+                    }
+                },
+                hilarious1Command: {
+                    command: 'hilarious',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/ZgFcDJE.webm'));
+                    }
+                },
+                gloryhole1Command: {
+                    command: 'gloryhole',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/tdqZwhp.webm'));
+                    }
+                },
+
+                bad1Command: {
+                    command: 'bad',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/WUOLKkl.webm'));
+                    }
+                },
+                bad2Command: {
+                    command: 'bad1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/5GG2m93.webm'));
+                    }
+                },
+                bad3Command: {
+                    command: 'bad2',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/Tw5MCuB.gif'));
+                    }
+                },
+                bad4Command: {
+                    command: 'bad3',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/81PvIBS.webm'));
+                    }
+                },
+                bad5Command: {
+                    command: 'bad4',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/New6lgb.gif'));
+                    }
+                },
+                feelbad1Command: {
+                    command: 'feelbad',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/L8SLyYp.gif'));
+                    }
+                },
+                clap1Command: {
+                    command: 'clap',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/ljp2oIK.webm'));
+                    }
+                },
+                clap2Command: {
+                    command: 'clap1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/EewRcj5.webm'));
+                    }
+                },
+                brofist1Command: {
+                    command: 'brofist',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/lIpVeN0.gif'));
+                    }
+                },
+                hangyourself1Command: {
+                    command: 'hangyourself',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/e2KTFEV.jpg'));
+                    }
+                },
+                laugh1Command: {
+                    command: 'laugh',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/JJXmxnr.jpg'));
+                    }
+                },
+                laugh2Command: {
+                    command: 'laugh1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/LUU1tI9.jpg'));
+                    }
+                },
+                laugh3Command: {
+                    command: 'laugh2',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/qwhQw6r.gif'));
+                    }
+                },
+                flirtCommand: {
+                    command: 'flirt',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/ty5bFLl.jpg'));
+                    }
+                },
+                flirt1Command: {
+                    command: 'flirt1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/7JJDWkJ.jpg'));
+                    }
+                },
+                flirt2Command: {
+                    command: 'flirt2',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/HACLrUx.jpg'));
+                    }
+                },
+                flirt3Command: {
+                    command: 'flirt3',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/Kj8M8Np.jpg'));
+                    }
+                },
+                flirt4Command: {
+                    command: 'flirt4',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/io03xZl.jpg'));
+                    }
+                },
+                flirt5Command: {
+                    command: 'flirt5',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/52f3kZC.jpg'));
+                    }
+                },
+                flirt6Command: {
+                    command: 'flirt6',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/jql0uF9.jpg'));
+                    }
+                },
+                flirt7Command: {
+                    command: 'flirt7',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/ZKiNUqy.jpg'));
+                    }
+                },
+                sad1Command: {
+                    command: 'sad',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/B9DaCjz.webm'));
+                    }
+                },
+                djdoge1Command: {
+                    command: 'djdoge',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/N6Mb74t.jpg'));
+                    }
+                },
+                rodge1Command: {
+                    command: 'rodge',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/YTThds9.jpg'));
+                    }
+                },
+                noregrets1Command: {
+                    command: 'noregrets',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/T7TN3WY.gif'));
+                    }
+                },
+                thefuck1Command: {
+                    command: 'thefuck',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/nIbnCPv.gif'));
+                    }
+                },
+                good1Command: {
+                    command: 'good',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/FhBFNSO.gif'));
+                    }
+                },
+                no1Command: {
+                    command: 'no',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/5dXFx43.gif'));
+                    }
+                },
+                ass1Command: {
+                    command: 'ass',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        var num = Math.floor((Math.random() * 35) + 1);
+                        switch(num) {
+                            case 35:
+                                API.sendChat('http://i.imgur.com/kJDwe7D.jpg');
+                            break;
+                            case 1:
+                                API.sendChat('http://i.imgur.com/C0hQUXf.jpg');
+                            break;
+                            case 2:
+                                API.sendChat('http://i.imgur.com/TQdOc87.jpg');
+                            break;
+                            case 3:
+                                API.sendChat('http://i.imgur.com/YySt3Oi.jpg');
+                            break;
+                            case 4:
+                                API.sendChat('http://i.imgur.com/cpesDuB.jpg');
+                            break;
+                            case 5:
+                                API.sendChat('http://i.imgur.com/GGEdvFR.jpg');
+                            break;
+                            case 6:
+                                API.sendChat('http://i.imgur.com/hWgIgEJ.jpg');
+                            break;
+                            case 7:
+                                API.sendChat('http://i.imgur.com/SuC8xyv.jpg');
+                            break;
+                            case 8:
+                                API.sendChat('http://i.imgur.com/Fdu7OWW.jpg');
+                            break;
+                            case 9:
+                                API.sendChat('http://i.imgur.com/NJNXHlX.jpg');
+                            break;
+                            case 10:
+                                API.sendChat('http://i.imgur.com/lwxbqjg.jpg');
+                            break;
+                            case 11:
+                                API.sendChat('http://i.imgur.com/6Npu788.jpg');
+                            break;
+                            case 12:
+                                API.sendChat('http://i.imgur.com/HUWVZUz.jpg');
+                            break;
+                            case 13:
+                                API.sendChat('http://i.imgur.com/q6TZtS9.jpg');
+                            break;
+                            case 14:
+                                API.sendChat('http://i.imgur.com/DQXNpxI.jpg');
+                            break;
+                            case 15:
+                                API.sendChat('http://i.imgur.com/LEk3rzl.jpg');
+                            break;
+                            case 16:
+                                API.sendChat('http://i.imgur.com/JaGObVr.jpg');
+                            break;
+                            case 17:
+                                API.sendChat('http://i.imgur.com/FqywGye.png');
+                            break;
+                            case 18:
+                                API.sendChat('http://i.imgur.com/7qv645s.jpg');
+                            break;
+                            case 19:
+                                API.sendChat('http://i.imgur.com/KVgjfsc.jpg');
+                            break;
+                            case 20:
+                                API.sendChat('http://i.imgur.com/g4SZU3R.jpg');
+                            break;
+                            case 21:
+                                API.sendChat('http://i.imgur.com/nXgDkMG.jpg');
+                            break;
+                            case 22:
+                                API.sendChat('http://i.imgur.com/3dqD28t.jpg');
+                            break;
+                            case 23:
+                                API.sendChat('http://i.imgur.com/4dlD6Hh.jpg');
+                            break;
+                            case 24:
+                                API.sendChat('http://i.imgur.com/EDzWIWQ.jpg');
+                            break;
+                            case 25:
+                                API.sendChat('http://i.imgur.com/WIsu2vb.jpg');
+                            break;
+                            case 26:
+                                API.sendChat('http://i.imgur.com/mVDvT1r.jpg');
+                            break;
+                            case 27:
+                                API.sendChat('http://i.imgur.com/cQIf8aP.jpg');
+                            break;
+                            case 28:
+                                API.sendChat('http://i.imgur.com/H2CyKnG.jpg');
+                            break;
+                            case 29:
+                                API.sendChat('http://i.imgur.com/BQHnTiQ.jpg');
+                            break;
+                            case 30:
+                                API.sendChat('http://i.imgur.com/xF7eaRg.jpg');
+                            break;
+                            case 31:
+                                API.sendChat('http://i.imgur.com/XzGlUZR.jpg');
+                            break;
+                            case 32:
+                                API.sendChat('http://i.imgur.com/s4bg9bv.jpg');
+                            break;
+                            case 33:
+                                API.sendChat('http://i.imgur.com/R85yyC8.jpg');
+                            break;
+                            case 34:
+                                API.sendChat('http://i.imgur.com/cD9Rugy.jpg');
+                            break;
+                        }
+                    }
+                },
+                why1Command: {
+                    command: 'why',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/w4E0ICB.webm'));
+                    }
+                },
+                why2Command: {
+                    command: 'why1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/vi7Nc9o.webm'));
+                    }
+                },
+                wiggleCommand: {
+                    command: 'wiggle',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/sYDxFZe.gif'));
+                    }
+                },
+                playNumberCommand: {
+                    command: 'playnumber',
+                    rank: 'mod',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        if (!ambient.commands.executable(this.rank, chat)) { return void (0); }
+                        ambient.room.numberG.playNumberGame();
+                    }
+                },
+                wiggle1Command: {
+                    command: 'wiggle1',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/ba2vGxM.gif'));
+                    }
+                },
+                wiggle2Command: {
+                    command: 'wiggle2',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/2QewkCH.gif'));
+                    }
+                },
+                wiggle3Command: {
+                    command: 'wiggle3',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/OEpvOZg.gif'));
+                    }
+                },
+                brohug1Command: {
+                    command: 'brohug',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/yvIbI7U.gif'));
+                    }
+                },
+                broshake1Command: {
+                    command: 'broshake',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/6Jz01NY.gif'));
+                    }
+                },
+
+                approveCommand: {
+                    command: 'approve',
+                    rank: 'bouncer',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                        if (!ambient.commands.executable(this.rank, chat)) return void (0);
+                        else {
+                            var msg = chat.message;
+                            var name;
+                            if (msg.length === cmd.length) name = chat.un;
+                            else {
+                                name = msg.substr(cmd.length + 2);
+                            }
+                            users = API.getUsers();
+                            var len = users.length;
+                            for (var i = 0; i < len; ++i){
+                                if (users[i].username == name){
+                                    var otherid = users[i].id;
+
+
+                                    API.sendChat(subChat('/me ' + name + '\'s next Track has been approved!'));
+                                    ambient.settings.approvedDJ = otherid;
+                                }
+                            }
+                        }
+                    }
+                },
+
+                opinionCommand: {
+                    command: 'opinion',
+                    rank: 'bouncer',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                        if (!ambient.commands.executable(this.rank, chat)) return void (0);
+                        else {
+                            var msg = chat.message;
+                            var name;
+                            if (msg.length === cmd.length) name = chat.un;
+                            else {
+                                name = msg.substr(cmd.length + 2);
+                            }
+                            users = API.getUsers();
+                            var len = users.length;
+                            for (var i = 0; i < len; ++i){
+                                if (users[i].username == name){
+                                    var id = users[i].id;
+
+
+                                    API.sendChat(subChat('/me ' + name + '\'s opinion value set to: Absolute Fucking 0.'));
+                                }
+                            }
+                        }
+                    }
+                },
+                staffonCommand: {
+                    command: 'staffon',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                        if (!ambient.commands.executable(this.rank, chat)) return void (0);
+                        else {
+                            var msg = chat.message;
+                            var id = chat.uid;
+                            var sOnline = 0;
+                            users = API.getUsers();
+                            var len = users.length;
+                            for (var i = 0; i < len; ++i){
+                                if (ambient.userUtilities.getPermission(users[i].id) > 1){
+                                    sOnline += 1;
+                                }
+                            }
+
+
+                            API.sendChat(subChat("/me Currently there are " + sOnline + " staff members online.."));
+                        }
+                    }
+                },
+                bye1Command: {
+                    command: 'bye',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) { return void (0); }
+                        API.sendChat(subChat('http://i.imgur.com/d61Aszu.webm'));
+                    }
+                },
+
+
+
+                whoisCommand: {
+                    command: 'whois',
+                    rank: 'bouncer',
+                    type: 'startsWith',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                        if (!ambient.commands.executable(this.rank, chat)) return void (0);
+                        else {
+                            var msg = chat.message;
+                            var name;
+                            if (msg.length === cmd.length) name = chat.un;
+                            else {
+                                name = msg.substr(cmd.length + 2);
+                            }
+                            users = API.getUsers();
+                            var len = users.length;
+                            for (var i = 0; i < len; ++i){
+                                if (users[i].username == name){
+                                    var id = users[i].id;
+                                    var avatar = API.getUser(id).avatarID;
+                                    var level = API.getUser(id).level;
+                                    var rawjoined = API.getUser(id).joined;
+                                    var joined = rawjoined.substr(0, 10);
+                                    var rawlang = API.getUser(id).language;
+                                    if (rawlang == "en"){
+                                        var language = "English";
+                                    } else if (rawlang == "bg"){
+                                        var language = "Bulgarian";
+                                    } else if (rawlang == "cs"){
+                                        var language = "Czech";
+                                    } else if (rawlang == "fi"){
+                                        var language = "Finnish"
+                                    } else if (rawlang == "fr"){
+                                        var language = "French"
+                                    } else if (rawlang == "pt"){
+                                        var language = "Portuguese"
+                                    } else if (rawlang == "zh"){
+                                        var language = "Chinese"
+                                    } else if (rawlang == "sk"){
+                                        var language = "Slovak"
+                                    } else if (rawlang == "nl"){
+                                        var language = "Dutch"
+                                    } else if (rawlang == "ms"){
+                                        var language = "Malay"
+                                    }
+                                    var rawstatus = API.getUser(id).status;
+                                    if (rawstatus == "0"){
+                                        var status = "Available";
+                                    } else if (rawstatus == "1"){
+                                        var status = "Away";
+                                    } else if (rawstatus == "2"){
+                                        var status = "Working";
+                                    } else if (rawstatus == "3"){
+                                        var status = "Gaming"
+                                    }
+                                    var rawrank = API.getUser(id).role;
+                                    if (rawrank == "0"){
+                                        var rank = "User";
+                                    } else if (rawrank == "1"){
+                                        var rank = "Resident DJ";
+                                    } else if (rawrank == "2"){
+                                        var rank = "Bouncer";
+                                    } else if (rawrank == "3"){
+                                        var rank = "Manager"
+                                    } else if (rawrank == "4"){
+                                        var rank = "Co-Host"
+                                    } else if (rawrank == "5"){
+                                        var rank = "Host"
+                                    } else if (rawrank == "7"){
+                                        var rank = "Brand Ambassador"
+                                    } else if (rawrank == "10"){
+                                        var rank = "Admin"
+                                    }
+                                    var slug = API.getUser(id).slug;
+                                    if (typeof slug !== 'undefined') {
+                                        var profile = ", Profile: http://plug.dj/@/" + slug;
+                                    } else {
+                                        var profile = "";
+                                    }
+
+                                    API.sendChat(subChat(ambient.chat.whois, {name1: chat.un, name2: name, id: id, avatar: avatar, profile: profile, language: language, level: level, status: status, joined: joined, rank: rank}));
+                                }
+                            }
+                        }
+                    }
+                },
+
+                youtubeCommand: {
+                    command: 'youtube',
+                    rank: 'user',
+                    type: 'exact',
+                    functionality: function (chat, cmd) {
+                        if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                        if (!ambient.commands.executable(this.rank, chat)) return void (0);
+                        else {
+                            if (typeof ambient.settings.youtubeLink === "string")
+                                API.sendChat(subChat(ambient.chat.youtube, {name: chat.un, link: ambient.settings.youtubeLink}));
+                        }
                     }
                 }
             }
-        }
-    };
+        };
 
-    loadChat(basicBot.startup);
+    loadChat(ambient.startup);
 }).call(this);
