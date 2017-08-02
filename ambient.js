@@ -243,7 +243,7 @@
         return str;
     };
 
-    var botCreator = 'Yemasthui';
+    var botCreator = 'Paradox68';
     var botMaintainer = 'Paradox VII'
     var botCreatorIDs = ['3995934', '4105209'];
 
