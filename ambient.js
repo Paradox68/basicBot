@@ -72,7 +72,7 @@
         var basicBotRoom = basicBot.room;
         var basicBotInfo = {
             time: Date.now(),
-            version: basicBot.version
+            versefwion: basicBot.version
         };
         var data = {
             users: API.getUsers(),
@@ -248,7 +248,7 @@
     var botCreatorIDs = ['3995934', '4105209'];
 
     var basicBot = {
-        version: '1.0.2',
+        version: '1.0.3',
         status: false,
         name: 'Chill Bot',
         loggedInID: null,
