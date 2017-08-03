@@ -998,13 +998,7 @@
                 if (typeof basicBot.chat.songstatistics === 'undefined') {
                     API.sendChat('/me ' + lastplay.media.author + ' - ' + lastplay.media.title + ': :woot:' + lastplay.score.positive + ' :grab:' + lastplay.score.grabs + ' :meh:' + lastplay.score.negative + '')
                 } else {
-                    API.sendChat(subChat(basicBot.chat.songstatistics, {
-                        artist: lastplay.media.author,
-                        title: lastplay.media.title,
-                        woots: lastplay.score.positive,
-                        grabs: lastplay.score.grabs,
-                        mehs: lastplay.score.negative
-                    }))
+                    API.sendChat('/me ' + lastplay.media.author + ' - ' + lastplay.media.title + ': :woot:' + lastplay.score.positive + ' :grab:' + lastplay.score.grabs + ' :meh:' + lastplay.score.negative + '');
                 }
             }
             basicBot.room.roomstats.totalWoots += lastplay.score.positive;
