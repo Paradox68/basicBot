@@ -3201,6 +3201,69 @@
                 }
             },
          
+                     thumbsUpCommand: {
+                command: 'thumbsup',
+                rank: 'user',
+                type: 'exact',
+                functionality: function(chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void(0);
+                    if (!basicBot.commands.executable(this.rank, chat)) return void(0);
+                    else {
+                        API.sendChat("https://media.giphy.com/media/XJPKr9xgbD0bu/200.gif");
+                    }
+                }
+            },
+                              fuckCommand: {
+                command: 'fuck',
+                rank: 'user',
+                type: 'exact',
+                functionality: function(chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void(0);
+                    if (!basicBot.commands.executable(this.rank, chat)) return void(0);
+                    else {
+                        API.sendChat("https://media.giphy.com/media/IYIlvuWc21U4g/giphy.gif");
+                    }
+                }
+            },
+         
+                eyerollCommand: {
+                command: 'eyeroll',
+                rank: 'user',
+                type: 'exact',
+                functionality: function(chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void(0);
+                    if (!basicBot.commands.executable(this.rank, chat)) return void(0);
+                    else {
+                        API.sendChat("https://media.giphy.com/media/fvtmoJ7S6GzRe/giphy.gif");
+                    }
+                }
+            },
+         
+                  gangstasCommand: {
+                command: 'gangstas',
+                rank: 'user',
+                type: 'exact',
+                functionality: function(chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void(0);
+                    if (!basicBot.commands.executable(this.rank, chat)) return void(0);
+                    else {
+                        API.sendChat("https://media1.giphy.com/media/OAjlP22ecZn8s/giphy.gif");
+                    }
+                }
+            },
+                           supCommand: {
+                command: 'sup',
+                rank: 'user',
+                type: 'exact',
+                functionality: function(chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void(0);
+                    if (!basicBot.commands.executable(this.rank, chat)) return void(0);
+                    else {
+                        API.sendChat("https://media1.giphy.com/media/FCj2lt4LKtYyY/giphy.gif");
+                    }
+                }
+            },
+         
 
             refreshCommand: {
                 command: 'refresh',
